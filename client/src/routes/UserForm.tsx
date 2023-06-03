@@ -1,16 +1,18 @@
-import { Outlet } from "react-router-dom"
+import { NavigateFunction, Outlet, useNavigate } from "react-router-dom"
 import Loading from "../components/Loading"
 import { useState } from "react"
 
 export interface IForm{
   isFilled: (user: object) => boolean,
   isEmailValid: (email: string) => boolean,
-  setIsLoading: (isLoading: boolean) => void
+  setIsLoading: (isLoading: boolean) => void,
+  navigate: NavigateFunction
 }
 
 const UserForm = () => {
 
-  const [isLoading, setIsLoading ] = useState(false);
+  const [isLoading, setIsLoading ] = useState(false)
+  const navigate = useNavigate()
 
   const isFilled = (user: object) => {
     let isFilled = true
@@ -45,7 +47,7 @@ const UserForm = () => {
           <h1 className="text-4xl text-orange-400 mb-6">Welcome to Chatopia!</h1>
           <h2 className="text-3xl bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-text text-transparent">Where Conversations Come Alive!</h2>
         </div>
-        <Outlet context={{isFilled, isEmailValid, setIsLoading}} />
+        <Outlet context={{isFilled, isEmailValid, setIsLoading, navigate}} />
       </main>
     </div>
   )
