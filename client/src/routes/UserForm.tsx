@@ -21,17 +21,17 @@ const UserForm = () => {
         }
     }
     return isFilled
-}
+  }
 
-const isEmailValid = (email: string) => {
-    if(email.trim() === "") return false
-    if(email.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)){
-        return true
-    }
-    document.getElementById("email-error")!.textContent = "Email is invalid"
-    document.getElementById("email-error")?.classList.replace("invisible", "visible")
-    return false
-}
+  const isEmailValid = (email: string) => {
+      if(email.trim() === "") return false
+      if(email.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)){
+          return true
+      }
+      document.getElementById("email-error")!.textContent = "Email is invalid"
+      document.getElementById("email-error")?.classList.replace("invisible", "visible")
+      return false
+  }
   return (
     <div className="bg-gradient-to-r flex justify-center items-center from-cyan-400 to-blue-400 login-wrapper min-h-screen">
       <main className="flex max-[750px]:flex-col bg-white p-5 rounded-2xl w-10/12 justify-center items-center max-w-4xl min-w-60 gap-8">
