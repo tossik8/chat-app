@@ -5,7 +5,7 @@ import { IForm } from "../routes/UserForm";
 
 const Login = () => {
 
-    const {isFilled, isEmailValid} = useOutletContext<IForm>();
+    const {isFilled, isEmailValid, setIsLoading} = useOutletContext<IForm>();
 
     const [user, setUser] = useState({
         email: "",
@@ -21,6 +21,7 @@ const Login = () => {
         const filled = isFilled(user)
         const validEmail = isEmailValid(user.email)
         if(filled && validEmail){
+            setIsLoading(true)
             UserService.getUser(user).then(() => {
                 setUser({
                     email: "",
@@ -33,6 +34,8 @@ const Login = () => {
                     email: user.email,
                     password: ""
                 })
+            }).finally(() => {
+                setIsLoading(false)
             })
         }
     }

@@ -4,7 +4,7 @@ import { Link, useOutletContext } from "react-router-dom";
 import { IForm } from "../routes/UserForm";
 
 const Register = () => {
-    const {isFilled, isEmailValid} = useOutletContext<IForm>();
+    const {isFilled, isEmailValid, setIsLoading} = useOutletContext<IForm>();
     const [user, setUser] = useState({
         name:"",
         surname: "",
@@ -21,6 +21,7 @@ const Register = () => {
         const filled = isFilled(user)
         const validEmail = isEmailValid(user.email)
         if (!filled || !validEmail) return false
+        setIsLoading(true)
         const emailUnique = (await UserService.checkEmail(user.email)).data
         if(!emailUnique) {
             document.getElementById("email-error")!.textContent = "Email already exists"
@@ -46,7 +47,12 @@ const Register = () => {
                     email: "",
                     password: ""
                 })
+            }).finally(() => {
+                setIsLoading(false)
             })
+        }
+        else{
+            setIsLoading(false)
         }
     }
 
