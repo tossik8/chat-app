@@ -81,7 +81,7 @@ const Register = () => {
             <input className="block border-2 border-stone-400 w-full px-3 py-1 rounded-lg placeholder:text-[0.9rem] placeholder:italic transition-{border-color} ease-in-out duration-200 focus:outline-0 focus:border-blue-200 focus:caret-blue-600" type="password" id="password-input" name="password" value={user.password} onChange={e => handleInput(e)} placeholder="Password"/>
             <p id="password-error" className="text-red-500 min-h-fit invisible text-xs">.</p>
         </label>
-        <button className="bg-blue-400 border-2 border-blue-400 text-white my-2 w-24 h-7 rounded-2xl hover:text-blue-400 hover:bg-transparent hover:border-stone-400 focus-visible:outline-stone-400 focus-visible:bg-transparent focus-visible:text-blue-400 focus-visible:border-none active:text-sky-600 active:border-stone-400 active:bg-stone-400 active:outline-stone-400" onClick={handleClick} type="submit">Register</button>
+        <button className="bg-blue-400 border-2 border-blue-400 text-white my-2 w-24 h-7 rounded-2xl transition-colors ease-in-out hover:text-stone-400 hover:bg-transparent hover:border-stone-400 focus-visible:outline-stone-400 focus-visible:bg-transparent focus-visible:text-stone-400 focus-visible:border-none active:text-white active:border-stone-400 active:bg-stone-400 active:outline-stone-400" onClick={handleClick} type="submit">Register</button>
         <p className="text-[0.7rem] italic">Already have an account? <Link className="text-blue-700 hover:text-amber-600" to="/">Log in</Link></p>
     </form>
   )
