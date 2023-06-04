@@ -1,18 +1,28 @@
 import { NavigateFunction, Outlet, useNavigate } from "react-router-dom"
 import Loading from "../components/Loading"
 import { useState } from "react"
+import { AxiosResponse } from "axios"
 
 export interface IForm{
   isFilled: (user: object) => boolean,
   isEmailValid: (email: string) => boolean,
   setIsLoading: (isLoading: boolean) => void,
-  navigate: NavigateFunction
+  navigate: NavigateFunction,
+  setSession: (user: AxiosResponse) => void
 }
 
 const UserForm = () => {
 
   const [isLoading, setIsLoading ] = useState(false)
   const navigate = useNavigate()
+
+  const setSession = (user: AxiosResponse) => {
+    const { email, username, name, surname } = user.data
+    sessionStorage.setItem("email", email)
+    sessionStorage.setItem("username", username)
+    sessionStorage.setItem("name", name)
+    sessionStorage.setItem("surname", surname)
+  }
 
   const isFilled = (user: object) => {
     let isFilled = true
@@ -47,7 +57,7 @@ const UserForm = () => {
           <h1 className="text-4xl text-orange-400 mb-6">Welcome to Chatopia!</h1>
           <h2 className="text-3xl bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-text text-transparent">Where Conversations Come Alive!</h2>
         </div>
-        <Outlet context={{isFilled, isEmailValid, setIsLoading, navigate}} />
+        <Outlet context={{isFilled, isEmailValid, setIsLoading, navigate, setSession}} />
       </main>
     </div>
   )

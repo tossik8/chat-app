@@ -4,7 +4,7 @@ import { Link, useOutletContext } from "react-router-dom";
 import { IForm } from "../routes/UserForm";
 
 const Register = () => {
-    const {isFilled, isEmailValid, setIsLoading, navigate} = useOutletContext<IForm>();
+    const {isFilled, isEmailValid, setIsLoading, navigate, setSession} = useOutletContext<IForm>();
     const [user, setUser] = useState({
         name:"",
         surname: "",
@@ -39,7 +39,8 @@ const Register = () => {
         e.preventDefault()
         const isVerified:boolean = await verifyFields()
         if (isVerified){
-            UserService.saveUser(user).then(() => {
+            UserService.saveUser(user).then((user) => {
+                setSession(user)
                 setUser({
                     name: "",
                     surname: "",
