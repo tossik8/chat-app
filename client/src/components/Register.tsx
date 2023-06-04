@@ -62,23 +62,23 @@ const Register = () => {
   return (
     <form className="min-w-fit w-72 max-[750px]:w-9/12" method="post">
         <label htmlFor="name-input" className="block text-stone-700">Name
-            <input autoComplete="true" className="block border-2 border-stone-400 w-full px-3 py-1 rounded-lg placeholder:text-[0.9rem] placeholder:italic transition-{border-color} ease-in-out duration-200 focus:outline-0 focus:border-blue-200 focus:caret-blue-600" type="text" id="name-input" name="name" value={user.name} onChange={e => handleInput(e)} placeholder="Name" />
+            <input className="block border-2 border-stone-400 w-full px-3 py-1 rounded-lg placeholder:text-[0.9rem] placeholder:italic transition-{border-color} ease-in-out duration-200 focus:outline-0 focus:border-blue-200 focus:caret-blue-600" type="text" name="name" autoComplete="given-name" id="name-input" value={user.name} onChange={e => handleInput(e)} placeholder="Name" />
             <p id="name-error" className="text-red-500 min-h-fit invisible text-xs">.</p>
         </label>
         <label htmlFor="surname-input" className="block text-stone-700">Surname
-            <input className="block border-2 border-stone-400 w-full px-3 py-1 rounded-lg placeholder:text-[0.9rem] placeholder:italic transition-{border-color} ease-in-out duration-200 focus:outline-0 focus:border-blue-200 focus:caret-blue-600" type="text" id="surname-input" name="surname" value={user.surname} onChange={e => handleInput(e)} placeholder="Surname"/>
+            <input className="block border-2 border-stone-400 w-full px-3 py-1 rounded-lg placeholder:text-[0.9rem] placeholder:italic transition-{border-color} ease-in-out duration-200 focus:outline-0 focus:border-blue-200 focus:caret-blue-600" type="text" name="surname" autoComplete="family-name" id="surname-input" value={user.surname} onChange={e => handleInput(e)} placeholder="Surname"/>
             <p id="surname-error" className="text-red-500 min-h-fit invisible text-xs">.</p>
         </label>
         <label htmlFor="username-input" className="block text-stone-700">Username
-            <input autoComplete="true" className="block border-2 border-stone-400 w-full px-3 py-1 rounded-lg placeholder:text-[0.9rem] placeholder:italic transition-{border-color} ease-in-out duration-200 focus:outline-0 focus:border-blue-200 focus:caret-blue-600" type="text" id="username-input" name="username" value={user.username} onChange={e => handleInput(e)} placeholder="Username"/>
+            <input className="block border-2 border-stone-400 w-full px-3 py-1 rounded-lg placeholder:text-[0.9rem] placeholder:italic transition-{border-color} ease-in-out duration-200 focus:outline-0 focus:border-blue-200 focus:caret-blue-600" type="text" name="username" autoComplete="username" id="username-input" value={user.username} onChange={e => handleInput(e)} placeholder="Username"/>
             <p id="username-error" className="text-red-500 min-h-fit invisible text-xs">.</p>
         </label>
         <label htmlFor="email-input" className="block text-stone-700">Email
-            <input autoComplete="true" className="block border-2 border-stone-400 w-full px-3 py-1 rounded-lg placeholder:text-[0.9rem] placeholder:italic transition-{border-color} ease-in-out duration-200 focus:outline-0 focus:border-blue-200 focus:caret-blue-600" type="email" id="email-input" name="email" value={user.email} onChange={e => handleInput(e)} placeholder="Email"/>
+            <input className="block border-2 border-stone-400 w-full px-3 py-1 rounded-lg placeholder:text-[0.9rem] placeholder:italic transition-{border-color} ease-in-out duration-200 focus:outline-0 focus:border-blue-200 focus:caret-blue-600" type="email" name="email" autoComplete="email" id="email-input" value={user.email} onChange={e => handleInput(e)} placeholder="Email"/>
             <p id="email-error" className="text-red-500 min-h-fit invisible text-xs">.</p>
         </label>
         <label htmlFor="password-input" className="block text-stone-700">Password
-            <input className="block border-2 border-stone-400 w-full px-3 py-1 rounded-lg placeholder:text-[0.9rem] placeholder:italic transition-{border-color} ease-in-out duration-200 focus:outline-0 focus:border-blue-200 focus:caret-blue-600" type="password" id="password-input" name="password" value={user.password} onChange={e => handleInput(e)} placeholder="Password"/>
+            <input className="block border-2 border-stone-400 w-full px-3 py-1 rounded-lg placeholder:text-[0.9rem] placeholder:italic transition-{border-color} ease-in-out duration-200 focus:outline-0 focus:border-blue-200 focus:caret-blue-600" type="password" name="password" autoComplete="new-password" id="password-input" value={user.password} onChange={e => handleInput(e)} placeholder="Password"/>
             <p id="password-error" className="text-red-500 min-h-fit invisible text-xs">.</p>
         </label>
         <button className="bg-blue-400 border-2 border-blue-400 text-white my-2 w-24 h-7 rounded-2xl transition-colors ease-in-out hover:text-stone-400 hover:bg-transparent hover:border-stone-400 focus-visible:outline-stone-400 focus-visible:bg-transparent focus-visible:text-stone-400 focus-visible:border-none active:text-white active:border-stone-400 active:bg-stone-400 active:outline-stone-400" onClick={handleClick} type="submit">Register</button>

@@ -7,17 +7,15 @@ import UserForm from './routes/UserForm'
 function App() {
 
   return (
-    <>
-      <Router>
-        <Routes>
-          <Route path="/" element={<UserForm/>}>
-            <Route index element={<Login/>} />
-            <Route path="/register" element={<Register/>}/>
-          </Route>
-          <Route path="/main" element={<MainWindow/>}/>
-        </Routes>
-      </Router>
-    </>
+    <Router>
+      <Routes>
+        <Route path="/" element={<UserForm/>}>
+          <Route index element={<Login/>} />
+          <Route path="/register" element={<Register/>}/>
+        </Route>
+        <Route path="/main" element={<MainWindow/>}/>
+      </Routes>
+    </Router>
   )
 }
 
