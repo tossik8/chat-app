@@ -7,7 +7,7 @@ const MainWindow = () => {
     <div className="grid grid-cols-[35%_1fr] max-w-[110rem] mx-auto">
         <div>
             <Navigation/>
-            {[0, 1, 2].map(element => <Chat key={element} id={element}/>)}
+            {Array.from(Array(10), (e, i) => <Chat key={i} id={i}/>)}
         </div>
         <ChatWindow/>
     </div>

@@ -6,10 +6,10 @@ const Chat = ({id} : IChat) => {
   const activeStateColour = "bg-blue-200"
   const hoveredStateColour = "bg-stone-200"
   const handleClick = () => {
-    Array.from(document.getElementsByTagName("article")).map(article => {
-      article.classList.remove(activeStateColour)
-    })
-    document.getElementById(id.toString())?.classList.add(activeStateColour)
+    const element = document.getElementById(id.toString())
+    document.getElementsByClassName(activeStateColour)[0]?.classList.remove(activeStateColour)
+    element?.classList.remove(hoveredStateColour)
+    element?.classList.add(activeStateColour)
   }
   const handleMouseOver = () => {
     const hoveredElement = document.getElementById(id.toString());
@@ -21,7 +21,7 @@ const Chat = ({id} : IChat) => {
     document.getElementById(id.toString())?.classList.remove(hoveredStateColour);
   }
   return (
-    <article key={id} id={id.toString()} onClick={handleClick} onMouseOver={handleMouseOver} onMouseLeave={handleMouseLeave} className="flex items-center justify-between px-4 py-2 cursor-pointer transition-colors ease-in-out duration-150">
+    <article key={id} id={id.toString()} onClick={handleClick} onMouseOver={handleMouseOver} onMouseLeave={handleMouseLeave} className="flex items-center justify-between px-4 py-2 cursor-pointer">
       <div className="flex gap-4">
         <img src="/image-emily.jpg" alt="Chat image." className="w-12 rounded-3xl"/>
         <div className="flex flex-col gap-1">
