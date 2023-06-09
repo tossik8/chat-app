@@ -3,7 +3,6 @@ package com.example.server.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.Set;
 
 @Entity
 @Data
@@ -11,7 +10,7 @@ import java.util.Set;
 public class ChatEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long chat_id;
-    @ManyToMany(mappedBy = "chats")
-    private Set<UserEntity> users;
+    @Column(name="chat_id")
+    private long id;
+    private String name;
 }

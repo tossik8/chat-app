@@ -13,13 +13,11 @@ public class UserController {
     public UserController(UserService userService){
         this.userService = userService;
     }
-
-    @PostMapping("/create")
+    @PostMapping("/registration")
     public User createUser(@RequestBody User user){
         return userService.createUser(user);
     }
-
-    @PostMapping("/get")
+    @PostMapping("/login")
     public UserEntity getUser(@RequestBody User user){
         return userService.getUser(user);
     }

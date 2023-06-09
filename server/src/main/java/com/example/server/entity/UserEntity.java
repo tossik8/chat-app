@@ -11,7 +11,7 @@ import java.util.Set;
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long user_id;
+    private long id;
     private String name;
     private String surname;
     @Column(unique = true)
