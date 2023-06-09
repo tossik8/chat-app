@@ -5,7 +5,7 @@ import { IForm } from "../routes/UserForm";
 
 const Login = () => {
 
-    const {isFilled, isEmailValid, setIsLoading, navigate, setSession} = useOutletContext<IForm>();
+    const {isFilled, isEmailValid, setIsLoading, navigate, setSession} = useOutletContext<IForm>()
 
     const [user, setUser] = useState({
         email: "",

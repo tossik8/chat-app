@@ -2,6 +2,8 @@ import { NavigateFunction, Outlet, useNavigate } from "react-router-dom"
 import Loading from "../components/Loading"
 import { useState } from "react"
 import { AxiosResponse } from "axios"
+import { useDispatch } from "react-redux"
+import { setEmail, setId, setName, setSurname, setUsername } from "../store/userSlice"
 
 export interface IForm{
   isFilled: (user: object) => boolean,
@@ -13,15 +15,17 @@ export interface IForm{
 
 const UserForm = () => {
 
-  const [isLoading, setIsLoading ] = useState(false)
+  const [ isLoading, setIsLoading ] = useState(false)
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   const setSession = (user: AxiosResponse) => {
-    const { email, username, name, surname } = user.data
-    sessionStorage.setItem("email", email)
-    sessionStorage.setItem("username", username)
-    sessionStorage.setItem("name", name)
-    sessionStorage.setItem("surname", surname)
+    const { id, email, username, name, surname } = user.data
+    dispatch(setId(id))
+    dispatch(setName(name))
+    dispatch(setSurname(surname))
+    dispatch(setUsername(username))
+    dispatch(setEmail(email))
   }
 
   const isFilled = (user: object) => {
