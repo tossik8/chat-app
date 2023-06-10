@@ -1,7 +1,9 @@
 package com.example.server.services;
 
 import com.example.server.entity.UserEntity;
-import com.example.server.model.User;
+import com.example.server.model.LoginUser;
+import com.example.server.model.RegistrationUser;
+import com.example.server.model.SentUser;
 import com.example.server.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
@@ -24,26 +26,32 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public User createUser(User user){
+    public SentUser createUser(RegistrationUser user){
         UserEntity userEntity = new UserEntity();
         BeanUtils.copyProperties(user, userEntity);
         String encodedPassword = this.passwordEncoder.encode(userEntity.getPassword());
         userEntity.setPassword(encodedPassword);
         userRepository.save(userEntity);
-        return user;
+        return createSentUser(userEntity);
     }
     @Override
-    public UserEntity getUser(User user){
+    public SentUser getUser(LoginUser user){
         Optional<UserEntity> userEntity = userRepository.findByEmail(user.getEmail());
-        if(userEntity.isPresent()){
-            if(passwordEncoder.matches(user.getPassword(), userEntity.get().getPassword())){
-                return userEntity.get();
-            }
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Incorrect password");
-        }
-        else{
+        if(userEntity.isEmpty()) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
         }
+        if(!passwordEncoder.matches(user.getPassword(), userEntity.get().getPassword())){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Incorrect password");
+        }
+        return createSentUser(userEntity.get());
+    }
+
+    private SentUser createSentUser(UserEntity user){
+        return new SentUser(user.getId(),
+                user.getName(),
+                user.getSurname(),
+                user.getUsername(),
+                user.getEmail());
     }
 
     @Override

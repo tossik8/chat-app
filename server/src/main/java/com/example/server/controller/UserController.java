@@ -1,7 +1,9 @@
 package com.example.server.controller;
 
 import com.example.server.entity.UserEntity;
-import com.example.server.model.User;
+import com.example.server.model.LoginUser;
+import com.example.server.model.RegistrationUser;
+import com.example.server.model.SentUser;
 import com.example.server.services.UserService;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,11 +16,11 @@ public class UserController {
         this.userService = userService;
     }
     @PostMapping("/registration")
-    public User createUser(@RequestBody User user){
+    public SentUser createUser(@RequestBody RegistrationUser user){
         return userService.createUser(user);
     }
     @PostMapping("/login")
-    public UserEntity getUser(@RequestBody User user){
+    public SentUser getUser(@RequestBody LoginUser user){
         return userService.getUser(user);
     }
     @GetMapping("/email/{email}")
