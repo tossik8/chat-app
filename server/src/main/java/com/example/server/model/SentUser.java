@@ -1,7 +1,10 @@
 package com.example.server.model;
 
+import com.example.server.entity.ChatEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -11,4 +14,5 @@ public class SentUser {
     private String surname;
     private String username;
     private String email;
+    private Set<ChatEntity> chats;
 }
