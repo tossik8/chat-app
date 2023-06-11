@@ -3,7 +3,7 @@ import Loading from "../components/Loading"
 import { useState } from "react"
 import { AxiosResponse } from "axios"
 import { useDispatch } from "react-redux"
-import { setEmail, setId, setName, setSurname, setUsername } from "../store/userSlice"
+import { setChats, setEmail, setId, setName, setSurname, setUsername } from "../store/userSlice"
 
 export interface IForm{
   isFilled: (user: object) => boolean,
@@ -20,12 +20,13 @@ const UserForm = () => {
   const dispatch = useDispatch()
 
   const setSession = (user: AxiosResponse) => {
-    const { id, email, username, name, surname } = user.data
+    const { id, email, username, name, surname, chats } = user.data
     dispatch(setId(id))
     dispatch(setName(name))
     dispatch(setSurname(surname))
     dispatch(setUsername(username))
     dispatch(setEmail(email))
+    dispatch(setChats(chats))
   }
 
   const isFilled = (user: object) => {
@@ -54,7 +55,7 @@ const UserForm = () => {
       return false
   }
   return (
-    <div className="bg-gradient-to-r flex justify-center items-center from-cyan-400 to-blue-400 login-wrapper min-h-screen">
+    <div className="bg-gradient-to-r flex justify-center items-center from-cyan-400 to-blue-400 login-wrapper min-h-screen py-4 sm:py-0">
       {isLoading? <Loading/> : null }
       <main className="flex max-[750px]:flex-col bg-white p-5 rounded-2xl w-10/12 justify-center items-center max-w-4xl min-w-60 gap-8">
         <div className="max-[750px]:text-center">

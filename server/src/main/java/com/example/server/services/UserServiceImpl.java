@@ -86,11 +86,11 @@ public class UserServiceImpl implements UserService{
         if(!user.getEmail().matches("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$")){
             return new ResponseEntity<>("The email is invalid", HttpStatus.UNAUTHORIZED);
         }
-        if(userRepository.findByEmail(user.getEmail()).isPresent()){
-            return new ResponseEntity<>("The email is already registered", HttpStatus.UNAUTHORIZED);
-        }
         if(userRepository.findByUsername(user.getUsername()).isPresent()){
             return new ResponseEntity<>("The username is already in use", HttpStatus.UNAUTHORIZED);
+        }
+        if(userRepository.findByEmail(user.getEmail()).isPresent()){
+            return new ResponseEntity<>("The email is already registered", HttpStatus.UNAUTHORIZED);
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }

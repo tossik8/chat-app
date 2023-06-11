@@ -1,14 +1,24 @@
 import { createSlice } from "@reduxjs/toolkit";
 
+export interface UserState{
+    id: number,
+    name: string,
+    surname: string,
+    username: string,
+    email: string,
+    chats: {id: number, name: string}[],
+}
+
 export const userSlice = createSlice({
     name: "user",
     initialState: {
-        id: undefined,
-        name: undefined,
-        surname: undefined,
-        username: undefined,
-        email: undefined
-    },
+        id: -1,
+        name: "",
+        surname: "",
+        username: "",
+        email: "",
+        chats: [],
+    } as UserState,
     reducers: {
         setId: (state, {payload}) => {
             state.id = payload
@@ -24,9 +34,12 @@ export const userSlice = createSlice({
         },
         setEmail: (state, {payload}) => {
             state.email = payload
+        },
+        setChats: (state, {payload}) => {
+            state.chats = payload
         }
     }
 })
 
-export const { setId, setName, setSurname, setUsername, setEmail } = userSlice.actions
+export const { setId, setName, setSurname, setUsername, setEmail, setChats } = userSlice.actions
 export default userSlice

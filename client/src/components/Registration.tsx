@@ -17,28 +17,17 @@ const Register = () => {
         setUser({...user, [e.target.name]: e.target.value})
     }
 
-    const verifyFields = async ()=> {
+    const verifyFields = ()=> {
         const filled = isFilled(user)
         const validEmail = isEmailValid(user.email)
-        if (!filled || !validEmail) return false
-        setIsLoading(true)
-        const emailUnique = (await UserService.checkEmail(user.email)).data
-        if(!emailUnique) {
-            document.getElementById("email-error")!.textContent = "Email already exists"
-            document.getElementById("email-error")?.classList.replace("invisible", "visible")
-        }
-        const usernameUnique = (await UserService.checkUsername(user.username)).data
-        if(!usernameUnique){
-            document.getElementById("username-error")!.textContent = "Username is not available"
-            document.getElementById("username-error")?.classList.replace("invisible", "visible")
-        }
-        return emailUnique && usernameUnique
+        return filled && validEmail
     }
 
     const handleClick = async (e: React.MouseEvent) => {
         e.preventDefault()
-        const isVerified:boolean = await verifyFields()
+        const isVerified:boolean = verifyFields()
         if (isVerified){
+            setIsLoading(true)
             UserService.saveUser(user).then((user) => {
                 setSession(user)
                 setUser({
@@ -49,12 +38,19 @@ const Register = () => {
                     password: ""
                 })
                 navigate("/main")
+            }).catch((e) => {
+                const {message} = e.response.data;
+                if(message === "The username is already in use"){
+                    document.getElementById("username-error")!.textContent = "Username is not available"
+                    document.getElementById("username-error")?.classList.replace("invisible", "visible")
+                }
+                else if(message === "The email is already registered"){
+                    document.getElementById("email-error")!.textContent = message
+                    document.getElementById("email-error")?.classList.replace("invisible", "visible")
+                }
             }).finally(() => {
                 setIsLoading(false)
             })
-        }
-        else{
-            setIsLoading(false)
         }
     }
 

@@ -9,11 +9,9 @@ class UserService{
     getUser(user: object){
         return axios.post(`${USER_API_BASE_URL}/login`, user);
     }
-    checkEmail(email: string){
-        return axios.get(`${USER_API_BASE_URL}/email/${email}`);
+    getUserChats(id: number, chat_ids: string){
+        return axios.get(`${USER_API_BASE_URL}/chats/${id}?chat_ids=${chat_ids}`)
     }
-    checkUsername(username: string){
-        return axios.get(`${USER_API_BASE_URL}/username/${username}`);
-    }
+
 }
 export default new UserService()

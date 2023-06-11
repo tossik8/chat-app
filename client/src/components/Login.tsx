@@ -53,7 +53,7 @@ const Login = () => {
             <p id="password-error" className="text-red-500 min-h-fit invisible text-xs">.</p>
         </label>
         <button onClick={handleClick} className="bg-blue-400 border-2 border-blue-400 text-white my-2 w-24 h-7 rounded-2xl transition-colors ease-in-out hover:text-stone-400 hover:bg-transparent hover:border-stone-400 focus-visible:outline-stone-400 focus-visible:bg-transparent focus-visible:text-stone-400 focus-visible:border-none active:text-white active:border-stone-400 active:bg-stone-400 active:outline-stone-400" type="submit">Log in</button>
-        <p className="text-[0.7rem] italic text-stone-700">Haven't registered? <Link className="text-blue-700 hover:text-amber-600" to="/register">Register</Link></p>
+        <p className="text-[0.7rem] italic text-stone-700">Haven't registered? <Link className="text-blue-700 hover:text-amber-600" to="/registration">Register</Link></p>
     </form>
   )
 }

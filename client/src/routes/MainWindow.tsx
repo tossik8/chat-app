@@ -3,7 +3,7 @@ import ChatWindow from "../components/ChatWindow"
 import Navigation from "../components/Navigation"
 
 const MainWindow = () => {
-  return (
+    return (
     <div className="grid grid-cols-[35%_1fr] max-w-[110rem] mx-auto">
         <div>
             <Navigation/>
