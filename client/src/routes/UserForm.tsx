@@ -3,7 +3,7 @@ import Loading from "../components/Loading"
 import { useState } from "react"
 import { AxiosResponse } from "axios"
 import { useDispatch } from "react-redux"
-import { setChats, setEmail, setId, setName, setSurname, setUsername } from "../store/userSlice"
+import { setChats, setConnectedUsers, setEmail, setId, setName, setSurname, setUsername } from "../store/userSlice"
 
 export interface IForm{
   isFilled: (user: object) => boolean,
@@ -20,13 +20,14 @@ const UserForm = () => {
   const dispatch = useDispatch()
 
   const setSession = (user: AxiosResponse) => {
-    const { id, email, username, name, surname, chats } = user.data
+    const { id, email, username, name, surname, chats, connectedUsers } = user.data
     dispatch(setId(id))
     dispatch(setName(name))
     dispatch(setSurname(surname))
     dispatch(setUsername(username))
     dispatch(setEmail(email))
     dispatch(setChats(chats))
+    dispatch(setConnectedUsers(connectedUsers))
   }
 
   const isFilled = (user: object) => {

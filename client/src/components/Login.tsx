@@ -28,7 +28,7 @@ const Login = () => {
                     email: "",
                     password: ""
                 })
-                navigate("/main")
+               navigate("/main")
             }).catch(() => {
                 document.getElementById("password-error")!.textContent = "Incorrect email or password"
                 document.getElementById("password-error")?.classList.replace("invisible", "visible")
