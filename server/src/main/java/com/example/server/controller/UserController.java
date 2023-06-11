@@ -1,6 +1,5 @@
 package com.example.server.controller;
 
-import com.example.server.entity.UserEntity;
 import com.example.server.model.LoginUser;
 import com.example.server.model.RegistrationUser;
 import com.example.server.model.SentUser;
@@ -23,12 +22,4 @@ public class UserController {
     public SentUser getUser(@RequestBody LoginUser user){
         return userService.getUser(user);
     }
-    @GetMapping("/email/{email}")
-    public boolean checkEmail(@PathVariable(value="email") String email){
-        return userService.checkEmail(email);
-    }
-    @GetMapping("/username/{username}")
-    public boolean checkUsername(@PathVariable(value="username") String username){
-        return userService.checkUsername(username);
-    }
-}
+ }
