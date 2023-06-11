@@ -1,5 +1,6 @@
 package com.example.server.services;
 
+import com.example.server.entity.ChatEntity;
 import com.example.server.entity.UserEntity;
 import com.example.server.model.LoginUser;
 import com.example.server.model.RegistrationUser;
@@ -14,9 +15,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.ArrayList;
-import java.util.List;
+
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -53,19 +55,22 @@ public class UserServiceImpl implements UserService{
             if(!passwordEncoder.matches(user.getPassword(), userEntity.get().getPassword())){
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Incorrect password");
             }
-            return createSentUser(userEntity.get());
+            SentUser sentUser = createSentUser(userEntity.get());
+            addConnectedUsers(sentUser, userEntity.get());
+            return sentUser;
         }
         throw new ResponseStatusException(HttpStatusCode.valueOf(response.getStatusCode().value()), response.getBody());
     }
 
-    @Override
-    public List<SentUser> getUserChats(long[] chat_ids, long id){
-        List<UserEntity> users = userRepository.findByChatIds(chat_ids, id);
-        List<SentUser> sentUsers = new ArrayList<>(users.size());
-        for(UserEntity user : users){
-            sentUsers.add(createSentUser(user));
+    private void addConnectedUsers(SentUser user, UserEntity userEntity){
+        Set<Long> chat_ids = new HashSet<>();
+        for(ChatEntity chatEntity: userEntity.getChats()){
+            chat_ids.add(chatEntity.getId());
         }
-        return sentUsers;
+        for(UserEntity connectedUser : userRepository.findUserEntitiesByChatsIdInAndIdNot(chat_ids,
+                userEntity.getId())){
+            user.getConnectedUsers().add(createSentUser(connectedUser));
+        }
     }
     private SentUser createSentUser(UserEntity user){
         return new SentUser(user.getId(),
@@ -73,7 +78,8 @@ public class UserServiceImpl implements UserService{
                 user.getSurname(),
                 user.getUsername(),
                 user.getEmail(),
-                user.getChats());
+                user.getChats(),
+                new HashSet<>());
     }
     private ResponseEntity<String> verifyRegistrationForm(RegistrationUser user){
         if(hasMissingValues(user.getName(),

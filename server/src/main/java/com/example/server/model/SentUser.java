@@ -15,4 +15,5 @@ public class SentUser {
     private String username;
     private String email;
     private Set<ChatEntity> chats;
+    private Set<SentUser> connectedUsers;
 }
