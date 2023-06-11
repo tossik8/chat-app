@@ -14,6 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -56,6 +58,15 @@ public class UserServiceImpl implements UserService{
         throw new ResponseStatusException(HttpStatusCode.valueOf(response.getStatusCode().value()), response.getBody());
     }
 
+    @Override
+    public List<SentUser> getUserChats(long[] chat_ids, long id){
+        List<UserEntity> users = userRepository.findByChatIds(chat_ids, id);
+        List<SentUser> sentUsers = new ArrayList<>(users.size());
+        for(UserEntity user : users){
+            sentUsers.add(createSentUser(user));
+        }
+        return sentUsers;
+    }
     private SentUser createSentUser(UserEntity user){
         return new SentUser(user.getId(),
                 user.getName(),

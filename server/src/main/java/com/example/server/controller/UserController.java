@@ -6,6 +6,8 @@ import com.example.server.model.SentUser;
 import com.example.server.services.UserService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @CrossOrigin
 @RestController
 @RequestMapping("/api/v1/user")
@@ -21,5 +23,9 @@ public class UserController {
     @PostMapping("/login")
     public SentUser getUser(@RequestBody LoginUser user){
         return userService.getUser(user);
+    }
+    @GetMapping("/chats/{id}")
+    public List<SentUser> getUserChats(@PathVariable long id, @RequestParam long[] chat_ids){
+        return userService.getUserChats(chat_ids, id);
     }
  }
