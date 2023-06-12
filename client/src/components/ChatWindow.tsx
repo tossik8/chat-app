@@ -13,7 +13,7 @@ const ChatWindow = () => {
   }
 
   return (
-    <main className="h-screen max-h-[60rem] bg-sky-800 relative">
+    <main className="bg-sky-800 relative">
       {users.length === 0? <p className="absolute top-1/2 left-[46%] text-white text-sm bg-gray-400/30 px-4 rounded-xl">Select a chat</p> :
         <>
           <div className="bg-white px-4 py-2">

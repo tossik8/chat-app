@@ -63,8 +63,8 @@ const UserForm = () => {
       {isLoading? <Loading/> : null }
       <main className="flex max-[750px]:flex-col bg-white p-5 rounded-2xl w-10/12 justify-center items-center max-w-4xl min-w-60 gap-8">
         <div className="max-[750px]:text-center">
-          <h1 className="text-4xl text-orange-400 mb-6">Welcome to Chatopia!</h1>
-          <h2 className="text-3xl bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-text text-transparent">Where Conversations Come Alive!</h2>
+          <h1 className="sm:text-4xl text-2xl text-orange-400 mb-6">Welcome to Chatopia!</h1>
+          <h2 className="sm:text-3xl text-xl bg-gradient-to-r from-sky-500 to-indigo-500 bg-clip-text text-transparent">Where Conversations Come Alive!</h2>
         </div>
         <Outlet context={{isFilled, isEmailValid, setIsLoading, navigate, setSession}} />
       </main>
