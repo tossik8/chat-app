@@ -4,6 +4,7 @@ import { useState } from "react"
 import { AxiosResponse } from "axios"
 import { useDispatch } from "react-redux"
 import { setChats, setConnectedUsers, setEmail, setId, setName, setSurname, setUsername } from "../store/userSlice"
+import { setTitle, setUsers } from "../store/selectedChatSlice"
 
 export interface IForm{
   isFilled: (user: object) => boolean,
@@ -28,6 +29,8 @@ const UserForm = () => {
     dispatch(setEmail(email))
     dispatch(setChats(chats))
     dispatch(setConnectedUsers(connectedUsers))
+    dispatch(setTitle(""))
+    dispatch(setUsers([]))
   }
 
   const isFilled = (user: object) => {

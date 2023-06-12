@@ -8,14 +8,14 @@ const MainWindow = () => {
     const { chats, connectedUsers } = useSelector((state: RootState) => state.user)
     return (
     <div className="grid grid-cols-[35%_1fr] max-w-[110rem] mx-auto">
-        <div>
+        <div className="border-r border-stone-300">
             <Navigation/>
             {chats.map(chat => {
+                const users = connectedUsers.filter(user => user.chats.find(chats => chats.id == chat.id))
                 if(chat.name === null){
-                    const res = connectedUsers.find(user => user.chats.find(chats => chats.id == chat.id))
-                    return <Chat key={chat.id} id={chat.id} title={`${res!.name} ${res!.surname}`}/>
+                    return <Chat key={chat.id} id={chat.id} title={`${users[0]!.name} ${users[0]!.surname}`} connectedUsers={users}/>
                 }
-                return <Chat key={chat.id} id={chat.id} title={chat.name}/>
+                return <Chat key={chat.id} id={chat.id} title={chat.name} connectedUsers={users}/>
             })}
         </div>
         <ChatWindow/>

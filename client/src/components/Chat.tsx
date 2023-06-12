@@ -1,12 +1,20 @@
+import { useDispatch } from "react-redux"
+import { IUser } from "../store/userSlice"
+import { setTitle, setUsers } from "../store/selectedChatSlice"
+
 interface IChat{
   id: number,
-  title: string
+  title: string,
+  connectedUsers: IUser[]
 }
 
-const Chat = ({id, title} : IChat) => {
+const Chat = ({id, title, connectedUsers} : IChat) => {
+  const dispatch = useDispatch()
   const activeStateColour = "bg-blue-200"
   const hoveredStateColour = "bg-stone-200"
   const handleClick = () => {
+    dispatch(setUsers(connectedUsers))
+    dispatch(setTitle(title))
     const element = document.getElementById(id.toString())
     document.getElementsByClassName(activeStateColour)[0]?.classList.remove(activeStateColour)
     element?.classList.remove(hoveredStateColour)

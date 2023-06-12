@@ -4,14 +4,17 @@ import userSlice from "./userSlice";
 import persistCombineReducers from "redux-persist/es/persistCombineReducers";
 import thunk from "redux-thunk";
 import persistStore from "redux-persist/es/persistStore";
+import selectedChatSlice from "./selectedChatSlice";
 
 const persistConfig = {
     key: "root",
-    storage
+    storage,
+    blacklist: ["selectedChat"]
 }
 
 const rootReducer = persistCombineReducers(persistConfig, {
-    user: userSlice.reducer
+    user: userSlice.reducer,
+    selectedChat: selectedChatSlice.reducer
 })
 const store = configureStore({
     reducer: rootReducer,
