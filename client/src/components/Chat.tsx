@@ -1,10 +1,9 @@
 interface IChat{
   id: number,
-  name: string,
-  surname: string
+  title: string
 }
 
-const Chat = ({id, name, surname} : IChat) => {
+const Chat = ({id, title} : IChat) => {
   const activeStateColour = "bg-blue-200"
   const hoveredStateColour = "bg-stone-200"
   const handleClick = () => {
@@ -27,7 +26,7 @@ const Chat = ({id, name, surname} : IChat) => {
       <div className="flex gap-4">
         <img src="/image-emily.jpg" alt="Chat image." className="w-12 rounded-3xl"/>
         <div className="flex flex-col gap-1">
-          <p className="font-bold">{name} {surname}</p>
+          <p className="font-bold">{title}</p>
           <p className="text-sm"><span className="text-blue-400">Mike: </span> Last Message</p>
         </div>
       </div>
