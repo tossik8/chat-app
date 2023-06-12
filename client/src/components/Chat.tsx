@@ -32,7 +32,7 @@ const Chat = ({id, title, connectedUsers} : IChat) => {
   return (
     <article id={id.toString()} onClick={handleClick} onMouseOver={handleMouseOver} onMouseLeave={handleMouseLeave} className="flex items-center justify-between px-4 py-2 cursor-pointer">
       <div className="flex gap-4">
-        <img src="/image-emily.jpg" alt="Chat image." className="w-12 rounded-3xl"/>
+        <div className="w-12 flex justify-center items-center text-white bg-gradient-to-b from-cyan-500 to-blue-500 font-medium rounded-3xl text-xl">{title.split(" ").length == 2? title.split(" ")[0].charAt(0).toUpperCase() + title.split(" ")[1].charAt(0).toUpperCase() : title.charAt(0).toUpperCase()}</div>
         <div className="flex flex-col gap-1">
           <p className="font-bold">{title}</p>
           <p className="text-sm"><span className="text-blue-400">Mike: </span> Last Message</p>
