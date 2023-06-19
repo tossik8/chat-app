@@ -1,16 +1,31 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/store"
+import SockJs from "sockjs-client"
+import { Stomp } from "@stomp/stompjs"
 
 const ChatWindow = () => {
   const { title, users } = useSelector((state: RootState) => state.selectedChat)
-  const [input, setInput] = useState("")
+  const { chats, username } = useSelector((state: RootState) => state.user)
+  const [ input, setInput ] = useState("")
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const textarea = document.getElementsByTagName("textarea")[0]
     textarea.style.height = "0"
     textarea.style.height = textarea.scrollHeight + "px"
     setInput(e.target.value)
   }
+  useEffect(() => {
+    const socket = new SockJs("http://localhost:8080/ws")
+    const stompClient = Stomp.over(socket)
+    stompClient.connect({}, () => {
+      chats.forEach(chat => {
+        stompClient.subscribe(`/chat/${chat.id}/queue/messages`, (message) => {
+          console.log(message.body)
+        })
+      })
+      stompClient.send("/app/message", {}, JSON.stringify({chatId: 1, from: username, text: "hi"}))
+    })
+  }, [])
 
   return (
     <main className="relative bg-[url('/pexels-mudassir-ali-2680270.jpg')] bg-cover">
