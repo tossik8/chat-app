@@ -1,6 +1,6 @@
 import { useDispatch } from "react-redux"
 import { IUser } from "../store/userSlice"
-import { setTitle, setUsers } from "../store/selectedChatSlice"
+import { setId, setTitle, setUsers } from "../store/selectedChatSlice"
 
 interface IChat{
   id: number,
@@ -13,6 +13,7 @@ const Chat = ({id, title, connectedUsers} : IChat) => {
   const activeStateColour = "bg-blue-200"
   const hoveredStateColour = "bg-stone-200"
   const handleClick = () => {
+    dispatch(setId(id))
     dispatch(setUsers(connectedUsers))
     dispatch(setTitle(title))
     const element = document.getElementById(id.toString())
@@ -29,6 +30,8 @@ const Chat = ({id, title, connectedUsers} : IChat) => {
   const handleMouseLeave = () => {
     document.getElementById(id.toString())?.classList.remove(hoveredStateColour);
   }
+
+
   return (
     <article id={id.toString()} onClick={handleClick} onMouseOver={handleMouseOver} onMouseLeave={handleMouseLeave} className="flex items-center justify-between px-4 py-2 cursor-pointer">
       <div className="flex gap-4">
