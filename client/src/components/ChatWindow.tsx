@@ -19,8 +19,16 @@ const ChatWindow = ({client} : ChatWindowProps) => {
   }
 
   const handleClick = () => {
-    setInput("")
-    client.current.publish({destination: "/app/message", body: JSON.stringify({chatId: id, from: username, text: input})})
+    if(input){
+      setInput("")
+      client.current.publish({destination: "/app/message", body: JSON.stringify({chatId: id, from: username, text: input})})
+    }
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if(e.ctrlKey && e.key === "Enter"){
+      handleClick()
+    }
   }
 
   return (
@@ -33,7 +41,7 @@ const ChatWindow = ({client} : ChatWindowProps) => {
           </div>
           <ul id="messages" className="absolute bottom-20 px-4">{messages.map((message, i) => <li key={i}>{message.text}</li>)}</ul>
           <div className="bg-white flex items-center absolute bottom-0 w-full p-4 border-l border-stone-300">
-            <textarea onChange={e => handleChange(e)} className="placeholder:text-[0.9rem] h-5 max-h-28 overflow-hidden placeholder:italic resize-none w-full pr-5 focus:outline-0 focus:caret-blue-600" placeholder="Your message..." value={input} name="message"/>
+            <textarea onKeyDown={e => handleKeyDown(e)} onChange={e => handleChange(e)} className="placeholder:text-[0.9rem] h-5 max-h-28 overflow-hidden placeholder:italic resize-none w-full pr-5 focus:outline-0 focus:caret-blue-600" placeholder="Your message..." value={input} name="message"/>
             <button className="transition-{scale} ease-in-out duration-75 hover:scale-110 focus-visible:outline-0 focus-visible:scale-110"><img src="/send.png" width={25} alt="Send icon." onClick={handleClick}/></button>
           </div>
         </>}
