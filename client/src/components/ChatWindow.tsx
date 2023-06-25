@@ -9,7 +9,7 @@ interface ChatWindowProps{
 
 const ChatWindow = ({client} : ChatWindowProps) => {
   const { id, title, users, messages } = useSelector((state: RootState) => state.selectedChat)
-  const { name, surname } = useSelector((state: RootState) => state.user)
+  const { name, surname, id: senderId } = useSelector((state: RootState) => state.user)
   const [ input, setInput ] = useState("")
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const textarea = document.getElementsByTagName("textarea")[0]
@@ -22,7 +22,7 @@ const ChatWindow = ({client} : ChatWindowProps) => {
     if(input.trim()){
       setInput("")
       document.getElementsByTagName("textarea")[0].style.height = "20px"
-      client.current.publish({destination: "/app/message", body: JSON.stringify({chatId: id, from: `${name} ${surname}`, text: input.trim()})})
+      client.current.publish({destination: "/app/message", body: JSON.stringify({chatId: id, from: `${name} ${surname}`, text: input.trim(), senderId})})
     }
   }
 
@@ -44,7 +44,20 @@ const ChatWindow = ({client} : ChatWindowProps) => {
             <p className="font-bold">{title}</p>
             {users.length === 1? null : <p className="text-xs text-stone-400">{users.length} members</p>}
           </div>
-          <ul id="messages" className="px-4">{messages.map((message, i) => <li className="flex items-end gap-2" key={i}><div className="h-8 w-8 rounded-3xl flex justify-center items-center text-white bg-gradient-to-b from-cyan-500 to-blue-500 select-none text-sm font-medium">{displayLogo(message.from)}</div><div className="whitespace-pre p-1 rounded-md w-fit bg-white mt-3">{message.text}<span className="text-xs select-none text-sky-500 relative top-1 ms-4">15:20</span></div></li>)}</ul>
+          <ul id="messages" className="px-4">{messages.map((message, i) => (
+            <li className="flex items-end gap-2" key={i}>
+              <div className="h-8 w-8 rounded-3xl flex justify-center items-center text-white bg-gradient-to-b from-cyan-500 to-blue-500 select-none text-sm font-medium">{displayLogo(message.from)}</div>
+              {message.senderId === senderId?
+                <div className="whitespace-pre p-1 rounded-md w-fit bg-emerald-200 mt-3">
+                  {message.text}
+                  <span className="text-xs select-none text-sky-500 relative top-1 ms-4">15:20</span>
+                </div> :
+                <div className="whitespace-pre p-1 rounded-md w-fit bg-white mt-3">
+                  {message.text}
+                  <span className="text-xs select-none text-sky-500 relative top-1 ms-4">15:20</span>
+                </div>}
+            </li>))}
+          </ul>
           <div className="bg-white flex items-center absolute bottom-0 w-full px-4 py-2 border-l border-stone-300">
             <textarea onKeyDown={e => handleKeyDown(e)} onChange={e => handleChange(e)} className="placeholder:text-[0.9rem] h-5 max-h-28 overflow-hidden placeholder:italic resize-none w-full pr-5 focus:outline-0 focus:caret-blue-600" placeholder="Your message..." value={input} name="message"/>
             <button onClick={handleClick} className="p-2 hover:bg-stone-200 focus-visible:outline-0 focus-visible:bg-stone-200 active:scale-90"><img src="/send.png" width={25} alt="Send icon."/></button>

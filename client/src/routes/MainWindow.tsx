@@ -20,7 +20,7 @@ const MainWindow = () => {
             onConnect: () => {
                 chats.forEach(chat => {
                     client.current.subscribe(`/chat/${chat.id}/queue/messages`, (message) => {
-                        if(id == chat.id){
+                        if(id === chat.id){
                             dispatch(setMessages(JSON.parse(message.body)))
                         }
                         else{

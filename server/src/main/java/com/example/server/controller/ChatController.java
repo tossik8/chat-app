@@ -19,6 +19,6 @@ public class ChatController {
 
     @MessageMapping("/message")
     public void sendToChat(@Payload Message message){
-        simpMessagingTemplate.convertAndSendToUser(message.getChatId(), "/queue/messages", message);
+        simpMessagingTemplate.convertAndSendToUser(String.valueOf(message.getChatId()), "/queue/messages", message);
     }
 }
