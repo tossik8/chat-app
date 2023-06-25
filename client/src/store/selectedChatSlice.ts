@@ -5,7 +5,7 @@ export interface ISelectedChat{
     id: number
     title: string
     users: IUser[]
-    messages: {from: string, text: string, chatId: number, senderId: number}[]
+    messages: {from: string, text: string, chatId: number, senderId: number, time: string}[]
 }
 
 const selectedChatSlice = createSlice({

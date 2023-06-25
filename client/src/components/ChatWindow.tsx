@@ -21,8 +21,9 @@ const ChatWindow = ({client} : ChatWindowProps) => {
   const handleClick = () => {
     if(input.trim()){
       setInput("")
+      const now = new Date(Date.now())
       document.getElementsByTagName("textarea")[0].style.height = "20px"
-      client.current.publish({destination: "/app/message", body: JSON.stringify({chatId: id, from: `${name} ${surname}`, text: input.trim(), senderId})})
+      client.current.publish({destination: "/app/message", body: JSON.stringify({chatId: id, from: `${name} ${surname}`, text: input.trim(), senderId, time: `${now.getHours()}:${now.getMinutes()}`})})
     }
   }
 
@@ -48,13 +49,13 @@ const ChatWindow = ({client} : ChatWindowProps) => {
             <li className="flex items-end gap-2" key={i}>
               <div className="h-8 w-8 rounded-3xl flex justify-center items-center text-white bg-gradient-to-b from-cyan-500 to-blue-500 select-none text-sm font-medium">{displayLogo(message.from)}</div>
               {message.senderId === senderId?
-                <div className="whitespace-pre p-1 rounded-md w-fit bg-emerald-200 mt-3">
+                <div className="whitespace-pre p-1 rounded-md w-fit bg-blue-200 mt-3">
                   {message.text}
-                  <span className="text-xs select-none text-sky-500 relative top-1 ms-4">15:20</span>
+                  <span className="text-xs select-none text-neutral-500 relative top-1 ms-4">{message.time}</span>
                 </div> :
                 <div className="whitespace-pre p-1 rounded-md w-fit bg-white mt-3">
                   {message.text}
-                  <span className="text-xs select-none text-sky-500 relative top-1 ms-4">15:20</span>
+                  <span className="text-xs select-none text-neutral-500 relative top-1 ms-4">{message.time}</span>
                 </div>}
             </li>))}
           </ul>

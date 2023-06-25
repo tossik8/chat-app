@@ -8,4 +8,5 @@ public class Message {
     private String text;
     private long chatId;
     private long senderId;
+    private String time;
 }
