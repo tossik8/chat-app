@@ -23,7 +23,7 @@ const ChatWindow = ({client} : ChatWindowProps) => {
       setInput("")
       const now = new Date(Date.now())
       document.getElementsByTagName("textarea")[0].style.height = "20px"
-      client.current.publish({destination: "/app/message", body: JSON.stringify({chatId: id, from: `${name} ${surname}`, text: input.trim(), senderId, time: `${now.getHours()}:${now.getMinutes()}`})})
+      client.current.publish({destination: "/app/message", body: JSON.stringify({chatId: id, from: `${name} ${surname}`, text: input.trim(), senderId, time: `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`})})
       document.getElementById("message-textarea")!.focus()
     }
   }
