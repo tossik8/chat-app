@@ -16,10 +16,12 @@ const Chat = ({id, title, connectedUsers} : IChat) => {
     dispatch(setId(id))
     dispatch(setUsers(connectedUsers))
     dispatch(setTitle(title))
-    const element = document.getElementById(id.toString())
+    const element = document.getElementById(id.toString()) as HTMLElement
     document.getElementsByClassName(activeStateColour)[0]?.classList.remove(activeStateColour)
     element?.classList.remove(hoveredStateColour)
     element?.classList.add(activeStateColour)
+    element.getElementsByClassName("unread-messages-count")[0].setAttribute("data-value", "0")
+    element.getElementsByClassName("unread-messages-count")[0].textContent = ""
   }
   const handleMouseOver = () => {
     const hoveredElement = document.getElementById(id.toString());
@@ -37,17 +39,20 @@ const Chat = ({id, title, connectedUsers} : IChat) => {
   }
 
   return (
-    <article id={id.toString()} onClick={handleClick} onMouseOver={handleMouseOver} onMouseLeave={handleMouseLeave} className="flex items-center justify-between px-4 py-2 cursor-pointer">
-      <div className="flex gap-4">
-        <div className="w-12 flex justify-center items-center text-white bg-gradient-to-b from-cyan-500 to-blue-500 font-medium rounded-3xl text-xl select-none">{displayLogo(title)}</div>
-        <div className="flex flex-col gap-1">
-          <p className="font-bold">{title}</p>
-          <p className="text-sm"><span className="text-blue-400">Mike: </span> Last Message</p>
+    <article id={id.toString()} onClick={handleClick} onMouseOver={handleMouseOver} onMouseLeave={handleMouseLeave} className="flex min-h-[4rem] items-center px-4 py-2 cursor-pointer gap-4">
+      <div className="min-w-[3rem] min-h-[3rem] flex justify-center items-center text-white bg-gradient-to-b from-cyan-500 to-blue-500 font-medium rounded-3xl text-xl select-none">{displayLogo(title)}</div>
+      <div className="grid grid-cols-7 w-full">
+        <div className="flex flex-col gap-1 col-start-1 col-span-6">
+          <p className="font-bold truncate">{title}</p>
+          <div className="whitespace-nowrap flex gap-1">
+            <p className="text-blue-400 sender text-sm"></p>
+            <p className="truncate message text-sm"></p>
+          </div>
         </div>
-      </div>
-      <div className="flex flex-col items-end text-sm gap-1">
-        <p>15:20</p>
-        <div className="bg-stone-400 min-w-fit px-[0.3rem] rounded-xl text-center">9</div>
+        <div className="flex flex-col text-sm items-end justify-between">
+          <p className="time"></p>
+          <div className="bg-stone-400 min-w-fit px-[0.3rem] rounded-xl text-center unread-messages-count" data-value={0}></div>
+        </div>
       </div>
     </article>
   )
