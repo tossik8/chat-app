@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/store"
 import { Client } from "@stomp/stompjs"
@@ -20,10 +20,10 @@ const ChatWindow = ({client} : ChatWindowProps) => {
 
   const handleClick = () => {
     if(input.trim()){
-      setInput("")
       const now = new Date(Date.now())
-      document.getElementsByTagName("textarea")[0].style.height = "20px"
       client.current.publish({destination: "/app/message", body: JSON.stringify({chatId: id, from: `${name} ${surname}`, text: input.trim(), senderId, time: `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`})})
+      setInput("")
+      document.getElementsByTagName("textarea")[0].style.height = "20px"
       document.getElementById("message-textarea")!.focus()
     }
   }
@@ -38,15 +38,19 @@ const ChatWindow = ({client} : ChatWindowProps) => {
     return name.charAt(0).toUpperCase() + surname.charAt(0).toUpperCase()
   }
 
+  useEffect(() => {
+    document.getElementById("messages")?.scrollTo({top: document.getElementById("messages")?.scrollHeight, left: 0, behavior: "smooth"})
+  }, [messages])
+
   return (
     <main className="relative bg-[url('/pexels-mudassir-ali-2680270.jpg')] bg-cover max-h-screen">
       {users.length === 0? <p className="absolute top-1/2 left-[46%] text-white text-sm bg-gray-700/30 px-4 rounded-xl">Select a chat</p> :
         <>
-          <div className="bg-white px-4 py-2 border-l border-stone-300">
+          <div className="bg-white px-4 py-2 border-l border-stone-300 h-[6.8vh] max-h-[96.917px]">
             <p className="font-bold">{title}</p>
             {users.length === 1? null : <p className="text-xs text-stone-400">{users.length} members</p>}
           </div>
-          <ul id="messages" className="px-4">{messages.map((message, i) => (
+          <ul id="messages" className="px-4 h-[86.5vh] max-h-[1232.910px] pb-3 w-full overflow-y-auto scrollbar-thin scrollbar-track-gray-500 scrollbar-thumb-gray-700">{messages.map((message, i) => (
             <li className="flex items-end gap-2" key={i}>
               <div className="h-8 w-8 rounded-3xl flex justify-center items-center text-white bg-gradient-to-b from-cyan-500 to-blue-500 select-none text-sm font-medium">{displayLogo(message.from)}</div>
               {message.senderId === senderId?
@@ -60,7 +64,7 @@ const ChatWindow = ({client} : ChatWindowProps) => {
                 </div>}
             </li>))}
           </ul>
-          <div className="bg-white flex items-center gap-5 absolute bottom-0 w-full px-4 py-2 border-l border-stone-300">
+          <div className="bg-white flex absolute bottom-0 items-center gap-5 min-h-[6.7vh] w-full px-4 border-l border-stone-300">
             <textarea id="message-textarea" onKeyDown={e => handleKeyDown(e)} onChange={e => handleChange(e)} className="placeholder:text-[0.9rem] h-5 max-h-28 overflow-hidden placeholder:italic resize-none w-full focus:outline-0 focus:caret-blue-600" placeholder="Your message..." value={input} name="message"/>
             <button onClick={handleClick} className="p-2 hover:bg-stone-200 focus-visible:outline-0 focus-visible:bg-stone-200 active:scale-90"><img src="/send.png" width={25} alt="Send icon."/></button>
           </div>
