@@ -50,18 +50,18 @@ const ChatWindow = ({client} : ChatWindowProps) => {
             <li className="flex items-end gap-2" key={i}>
               <div className="h-8 w-8 rounded-3xl flex justify-center items-center text-white bg-gradient-to-b from-cyan-500 to-blue-500 select-none text-sm font-medium">{displayLogo(message.from)}</div>
               {message.senderId === senderId?
-                <div className="whitespace-pre p-1 rounded-md w-fit bg-blue-200 mt-3">
-                  {message.text}
-                  <span className="text-xs select-none text-neutral-500 relative top-1 ms-4">{message.time}</span>
+                <div className="p-1 rounded-md bg-blue-200 mt-3">
+                  <p className="whitespace-pre-wrap break-words max-w-[30rem] inline-block">{message.text}</p>
+                  <span className="text-xs select-none text-neutral-500 ml-2 relative top-1">{message.time}</span>
                 </div> :
-                <div className="whitespace-pre p-1 rounded-md w-fit bg-white mt-3">
-                  {message.text}
-                  <span className="text-xs select-none text-neutral-500 relative top-1 ms-4">{message.time}</span>
+                <div className="p-1 rounded-md bg-white mt-3">
+                  <p className="whitespace-pre-wrap break-words max-w-[30rem] inline-block">{message.text}</p>
+                  <span className="text-xs select-none text-neutral-500 ml-2 relative top-1">{message.time}</span>
                 </div>}
             </li>))}
           </ul>
-          <div className="bg-white flex items-center absolute bottom-0 w-full px-4 py-2 border-l border-stone-300">
-            <textarea id="message-textarea" onKeyDown={e => handleKeyDown(e)} onChange={e => handleChange(e)} className="placeholder:text-[0.9rem] h-5 max-h-28 overflow-hidden placeholder:italic resize-none w-full pr-5 focus:outline-0 focus:caret-blue-600" placeholder="Your message..." value={input} name="message"/>
+          <div className="bg-white flex items-center gap-5 absolute bottom-0 w-full px-4 py-2 border-l border-stone-300">
+            <textarea id="message-textarea" onKeyDown={e => handleKeyDown(e)} onChange={e => handleChange(e)} className="placeholder:text-[0.9rem] h-5 max-h-28 overflow-hidden placeholder:italic resize-none w-full focus:outline-0 focus:caret-blue-600" placeholder="Your message..." value={input} name="message"/>
             <button onClick={handleClick} className="p-2 hover:bg-stone-200 focus-visible:outline-0 focus-visible:bg-stone-200 active:scale-90"><img src="/send.png" width={25} alt="Send icon."/></button>
           </div>
         </>}
