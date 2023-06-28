@@ -6,8 +6,7 @@ export interface IUser{
     surname: string,
     username: string,
     email: string,
-    chats: {id: number, name: string}[],
-    connectedUsers: IUser[]
+    chats: {id: number, name: string, connectedUsers: IUser[]}[],
 }
 
 export const userSlice = createSlice({
@@ -18,8 +17,7 @@ export const userSlice = createSlice({
         surname: "",
         username: "",
         email: "",
-        chats: [],
-        connectedUsers: []
+        chats: []
     } as IUser,
     reducers: {
         setId: (state, {payload}) => {
@@ -39,12 +37,9 @@ export const userSlice = createSlice({
         },
         setChats: (state, {payload}) => {
             state.chats = payload
-        },
-        setConnectedUsers: (state, {payload}) => {
-            state.connectedUsers = payload
         }
     }
 })
 
-export const { setId, setName, setSurname, setUsername, setEmail, setChats, setConnectedUsers } = userSlice.actions
+export const { setId, setName, setSurname, setUsername, setEmail, setChats } = userSlice.actions
 export default userSlice

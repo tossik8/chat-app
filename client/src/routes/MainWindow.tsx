@@ -9,7 +9,7 @@ import { clearMessages, setMessages } from "../store/selectedChatSlice"
 
 
 const MainWindow = () => {
-    const { chats, connectedUsers, id: userId } = useSelector((state: RootState) => state.user)
+    const { chats, id: userId } = useSelector((state: RootState) => state.user)
     const { id } = useSelector((state: RootState) => state.selectedChat)
     const dispatch = useDispatch()
     let client = useRef<Client>(null!)
@@ -50,7 +50,7 @@ const MainWindow = () => {
         <div>
             <Navigation/>
             {chats !== null && chats.map(chat => {
-                const users = connectedUsers.filter(user => user.chats.find(chats => chats.id == chat.id))
+                const users = chat.connectedUsers
                 if(chat.name === null){
                     return <Chat key={chat.id} id={chat.id} title={`${users[0]!.name} ${users[0]!.surname}`} connectedUsers={users}/>
                 }

@@ -48,7 +48,7 @@ const ChatWindow = ({client} : ChatWindowProps) => {
         <>
           <div className="bg-white px-4 py-2 border-l border-stone-300 h-[6.8vh] max-h-[96.917px]">
             <p className="font-bold">{title}</p>
-            {users.length === 1? null : <p className="text-xs text-stone-400">{users.length} members</p>}
+            {users.length === 1? null : <p className="text-xs text-stone-400">{users.length + 1} members</p>}
           </div>
           <ul id="messages" className="px-4 h-[86.5vh] max-h-[1232.910px] pb-3 w-full overflow-y-auto scrollbar-thin scrollbar-track-gray-500 scrollbar-thumb-gray-700">{messages.map((message, i) => (
             <li className="flex items-end gap-2" key={i}>
