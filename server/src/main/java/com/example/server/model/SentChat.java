@@ -7,11 +7,8 @@ import java.util.Set;
 
 @Data
 @AllArgsConstructor
-public class SentUser {
+public class SentChat {
     private long id;
     private String name;
-    private String surname;
-    private String username;
-    private String email;
-    private Set<SentChat> chats;
+    private Set<SentUser> connectedUsers;
 }

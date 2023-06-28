@@ -11,5 +11,5 @@ import java.util.*;
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> findByEmail(String email);
     Optional<UserEntity> findByUsername(String username);
-    List<UserEntity> findUserEntitiesByChatsIdInAndIdNot(Set<Long> chats, long id);
+    Set<UserEntity> findUserEntitiesByChatsIdAndIdNot(long chat_id, long id);
 }

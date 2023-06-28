@@ -4,6 +4,7 @@ import com.example.server.entity.ChatEntity;
 import com.example.server.entity.UserEntity;
 import com.example.server.model.LoginUser;
 import com.example.server.model.RegistrationUser;
+import com.example.server.model.SentChat;
 import com.example.server.model.SentUser;
 import com.example.server.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
@@ -63,14 +64,16 @@ public class UserServiceImpl implements UserService{
     }
 
     private void addConnectedUsers(SentUser user, UserEntity userEntity){
-        Set<Long> chat_ids = new HashSet<>();
-        for(ChatEntity chatEntity: userEntity.getChats()){
-            chat_ids.add(chatEntity.getId());
+        Set<SentChat> chats = new HashSet<>();
+        for(ChatEntity chatEntity : userEntity.getChats()){
+            SentChat chat = new SentChat(chatEntity.getId(), chatEntity.getName(), new HashSet<>());
+            for(UserEntity connectedUser :
+                    userRepository.findUserEntitiesByChatsIdAndIdNot(chatEntity.getId(), user.getId())){
+                chat.getConnectedUsers().add(createSentUser(connectedUser));
+            }
+            chats.add(chat);
         }
-        for(UserEntity connectedUser : userRepository.findUserEntitiesByChatsIdInAndIdNot(chat_ids,
-                userEntity.getId())){
-            user.getConnectedUsers().add(createSentUser(connectedUser));
-        }
+        user.setChats(chats);
     }
     private SentUser createSentUser(UserEntity user){
         return new SentUser(user.getId(),
@@ -78,7 +81,6 @@ public class UserServiceImpl implements UserService{
                 user.getSurname(),
                 user.getUsername(),
                 user.getEmail(),
-                user.getChats(),
                 new HashSet<>());
     }
     private ResponseEntity<String> verifyRegistrationForm(RegistrationUser user){
