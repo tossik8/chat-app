@@ -5,14 +5,15 @@ import com.example.server.entity.MessageEntity;
 import com.example.server.entity.UserEntity;
 import com.example.server.model.Message;
 import com.example.server.model.SentMessage;
-import com.example.server.model.SentUser;
 import com.example.server.repository.ChatRepository;
 import com.example.server.repository.MessageRepository;
 import com.example.server.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class MessageServiceImpl implements MessageService{
@@ -41,7 +42,10 @@ public class MessageServiceImpl implements MessageService{
     }
 
     @Override
-    public SentMessage createSentMessage(MessageEntity messageEntity) {
-        return new SentMessage(messageEntity.getText(), messageEntity.getSentTime(), SentUser.createSentUser(messageEntity.getSender()));
+    public Set<SentMessage> getMessages(long id) {
+        Set<MessageEntity> messageEntities = messageRepository.findAllByChatId(id);
+        Set<SentMessage> messages = new HashSet<>();
+        messageEntities.forEach(messageEntity -> messages.add(SentMessage.createSentMessage(messageEntity)));
+        return messages;
     }
 }
