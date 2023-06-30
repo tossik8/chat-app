@@ -9,7 +9,7 @@ interface ChatWindowProps{
 
 const ChatWindow = ({client} : ChatWindowProps) => {
   const { id, title, users, messages } = useSelector((state: RootState) => state.selectedChat)
-  const { name, surname, id: senderId } = useSelector((state: RootState) => state.user)
+  const { id: senderId } = useSelector((state: RootState) => state.user)
   const [ input, setInput ] = useState("")
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const textarea = document.getElementsByTagName("textarea")[0]
@@ -20,8 +20,7 @@ const ChatWindow = ({client} : ChatWindowProps) => {
 
   const handleClick = () => {
     if(input.trim()){
-      const now = new Date(Date.now())
-      client.current.publish({destination: "/app/message", body: JSON.stringify({chatId: id, from: `${name} ${surname}`, text: input.trim(), senderId, time: `${now.getHours().toString().padStart(2, "0")}:${now.getMinutes().toString().padStart(2, "0")}`})})
+      client.current.publish({destination: "/app/message", body: JSON.stringify({chatId: id, text: input.trim(), senderId})})
       setInput("")
       document.getElementsByTagName("textarea")[0].style.height = "20px"
       document.getElementById("message-textarea")!.focus()
@@ -52,15 +51,15 @@ const ChatWindow = ({client} : ChatWindowProps) => {
           </div>
           <ul id="messages" className="px-4 h-[86.5vh] max-h-[1232.910px] pb-3 w-full overflow-y-auto scrollbar-thin scrollbar-track-gray-500 scrollbar-thumb-gray-700">{messages.map((message, i) => (
             <li className="flex items-end gap-2" key={i}>
-              <div className="h-8 w-8 rounded-3xl flex justify-center items-center text-white bg-gradient-to-b from-cyan-500 to-blue-500 select-none text-sm font-medium">{displayLogo(message.from)}</div>
-              {message.senderId === senderId?
+              <div className="h-8 w-8 rounded-3xl flex justify-center items-center text-white bg-gradient-to-b from-cyan-500 to-blue-500 select-none text-sm font-medium">{displayLogo(message.sender.name + " " + message.sender.surname)}</div>
+              {message.sender.id === senderId?
                 <div className="p-1 rounded-md bg-blue-200 mt-3">
                   <p className="whitespace-pre-wrap break-words max-w-[30rem] inline-block">{message.text}</p>
-                  <span className="text-xs select-none text-neutral-500 ml-2 relative top-1">{message.time}</span>
+                  <span className="text-xs select-none text-neutral-500 ml-2 relative top-1">{message.time.replace(/^.+T(\d{2}:\d{2}).+$/, "$1")}</span>
                 </div> :
                 <div className="p-1 rounded-md bg-white mt-3">
                   <p className="whitespace-pre-wrap break-words max-w-[30rem] inline-block">{message.text}</p>
-                  <span className="text-xs select-none text-neutral-500 ml-2 relative top-1">{message.time}</span>
+                  <span className="text-xs select-none text-neutral-500 ml-2 relative top-1">{message.time.replace(/^.+T(\d{2}:\d{2}).+$/, "$1")}</span>
                 </div>}
             </li>))}
           </ul>

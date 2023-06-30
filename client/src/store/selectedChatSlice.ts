@@ -1,20 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { IUser } from "./userSlice";
-
-export interface IMessage{
-    from: string,
-    text: string,
-    chatId: number,
-    senderId: number,
-    time: string
-}
-
-export interface ISelectedChat{
-    id: number
-    title: string
-    users: IUser[]
-    messages: IMessage[]
-}
+import { ISelectedChat } from "../global/types";
 
 const selectedChatSlice = createSlice({
     name: "selected chat",

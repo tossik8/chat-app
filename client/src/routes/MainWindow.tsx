@@ -6,6 +6,7 @@ import { RootState } from "../store/store"
 import { Client } from "@stomp/stompjs"
 import { useEffect, useRef } from "react"
 import { clearMessages, setMessages } from "../store/selectedChatSlice"
+import { IMessage } from "../global/types"
 
 
 const MainWindow = () => {
@@ -20,22 +21,21 @@ const MainWindow = () => {
             onConnect: () => {
                 chats.forEach(chat => {
                     client.current.subscribe(`/chat/${chat.id}/queue/messages`, (message) => {
-                        const parsedMessage = JSON.parse(message.body)
+                        const { text, time, sender } : IMessage = JSON.parse(message.body)
                         if(id === chat.id){
-                            dispatch(setMessages(parsedMessage))
+                            dispatch(setMessages({text, sender, time}))
                         }
-                        const { text, from, time, senderId } = parsedMessage
                         const article = document.getElementById(`${chat.id}`) as HTMLElement
-                        article.getElementsByClassName("time")[0]!.textContent = time
-                        article.getElementsByClassName("sender")[0]!.textContent = `${from}:`
+                        article.getElementsByClassName("time")[0]!.textContent = time.replace(/^.+T(\d{2}:\d{2}).+$/, "$1")
+                        article.getElementsByClassName("sender")[0]!.textContent = `${sender.name} ${sender.surname}:`
                         article.getElementsByClassName("message")[0]!.textContent = text
-                        if(userId !== senderId && id !== chat.id){
-                            const counter = article.getElementsByClassName("unread-messages-count")[0]
-                            const num = +counter.getAttribute("data-value")! + 1
-                            counter.setAttribute("data-value", `${num}`)
-                            if(num !== 0){
-                                counter.textContent = `${num}`
-                            }
+                        if(userId !== sender.id && id !== chat.id){
+                             const counter = article.getElementsByClassName("unread-messages-count")[0]
+                             const num = +counter.getAttribute("data-value")! + 1
+                             counter.setAttribute("data-value", `${num}`)
+                             if(num !== 0){
+                                 counter.textContent = `${num}`
+                             }
                         }
                     })
                 })
