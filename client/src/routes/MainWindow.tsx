@@ -6,7 +6,8 @@ import { RootState } from "../store/store"
 import { Client } from "@stomp/stompjs"
 import { useEffect, useRef } from "react"
 import { setMessages } from "../store/selectedChatSlice"
-import { IMessage } from "../global/types"
+import { IMessage, IUser } from "../global/types"
+import MessageService from "../services/MessageService"
 
 
 const MainWindow = () => {
@@ -20,15 +21,19 @@ const MainWindow = () => {
             brokerURL: "ws://localhost:8080/ws",
             onConnect: () => {
                 chats.forEach(chat => {
+                    const article = document.getElementById(`${chat.id}`) as HTMLElement
+                    getMessages(chat.id).then((message : IMessage)=> {
+                        displayChatInfo(article, message.time, message.sender, message.text)
+                    })
                     client.current.subscribe(`/chat/${chat.id}/queue/messages`, (message) => {
                         const { text, time, sender } : IMessage = JSON.parse(message.body)
                         if(id === chat.id){
                             dispatch(setMessages({text, sender, time}))
                         }
-                        const article = document.getElementById(`${chat.id}`) as HTMLElement
-                        article.getElementsByClassName("time")[0]!.textContent = time.replace(/^.+T(\d{2}:\d{2}).+$/, "$1")
-                        article.getElementsByClassName("sender")[0]!.textContent = `${sender.name} ${sender.surname}:`
-                        article.getElementsByClassName("message")[0]!.textContent = text
+                        const messages = JSON.parse(sessionStorage.getItem(`chat-${chat.id}`)!)
+                        messages.push({text, sender, time})
+                        sessionStorage.setItem(`chat-${chat.id}`,JSON.stringify(messages))
+                        displayChatInfo(article, time, sender, text)
                         if(userId !== sender.id && id !== chat.id){
                              const counter = article.getElementsByClassName("unread-messages-count")[0]
                              const num = +counter.getAttribute("data-value")! + 1
@@ -43,6 +48,18 @@ const MainWindow = () => {
         })
         client.current.activate()
     }, [id])
+
+    async function getMessages(chatId: number){
+        const messages = await MessageService.getMessages(chatId)
+        sessionStorage.setItem(`chat-${chatId}`,JSON.stringify(messages.data))
+        return messages.data.at(-1)
+    }
+
+    function displayChatInfo(article: HTMLElement, time: string, sender: IUser, text: string){
+        article.getElementsByClassName("time")[0]!.textContent = time.replace(/^.+T(\d{2}:\d{2}).+$/, "$1")
+        article.getElementsByClassName("sender")[0]!.textContent = `${sender.name} ${sender.surname}:`
+        article.getElementsByClassName("message")[0]!.textContent = text
+    }
 
     return (
     <div className="grid grid-cols-[35%_1fr] h-screen max-h-[1425px] max-w-[2560px] mx-auto">
