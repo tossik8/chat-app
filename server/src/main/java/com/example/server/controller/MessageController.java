@@ -4,7 +4,7 @@ import com.example.server.model.SentMessage;
 import com.example.server.services.MessageService;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Set;
+import java.util.List;
 
 @CrossOrigin
 @RestController
@@ -17,7 +17,7 @@ public class MessageController {
     }
 
     @GetMapping("/{chat-id}")
-    public Set<SentMessage> getMessages(@PathVariable("chat-id") long chatId){
+    public List<SentMessage> getMessages(@PathVariable("chat-id") long chatId){
         return messageService.getMessages(chatId);
     }
 }

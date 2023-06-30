@@ -11,9 +11,7 @@ import com.example.server.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class MessageServiceImpl implements MessageService{
@@ -42,9 +40,9 @@ public class MessageServiceImpl implements MessageService{
     }
 
     @Override
-    public Set<SentMessage> getMessages(long id) {
-        Set<MessageEntity> messageEntities = messageRepository.findAllByChatId(id);
-        Set<SentMessage> messages = new HashSet<>();
+    public List<SentMessage> getMessages(long id) {
+        List<MessageEntity> messageEntities = messageRepository.findAllByChatIdOrderBySentTime(id);
+        List<SentMessage> messages = new LinkedList<>();
         messageEntities.forEach(messageEntity -> messages.add(SentMessage.createSentMessage(messageEntity)));
         return messages;
     }
