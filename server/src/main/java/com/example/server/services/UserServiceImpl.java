@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService{
             String encodedPassword = this.passwordEncoder.encode(userEntity.getPassword());
             userEntity.setPassword(encodedPassword);
             userRepository.save(userEntity);
-            return createSentUser(userEntity);
+            return SentUser.createSentUser(userEntity);
         }
         throw new ResponseStatusException(HttpStatusCode.valueOf(response.getStatusCode().value()), response.getBody());
     }
@@ -56,7 +56,7 @@ public class UserServiceImpl implements UserService{
             if(!passwordEncoder.matches(user.getPassword(), userEntity.get().getPassword())){
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Incorrect password");
             }
-            SentUser sentUser = createSentUser(userEntity.get());
+            SentUser sentUser = SentUser.createSentUser(userEntity.get());
             addConnectedUsers(sentUser, userEntity.get());
             return sentUser;
         }
@@ -69,19 +69,11 @@ public class UserServiceImpl implements UserService{
             SentChat chat = new SentChat(chatEntity.getId(), chatEntity.getName(), new HashSet<>());
             for(UserEntity connectedUser :
                     userRepository.findUserEntitiesByChatsIdAndIdNot(chatEntity.getId(), user.getId())){
-                chat.getConnectedUsers().add(createSentUser(connectedUser));
+                chat.getConnectedUsers().add(SentUser.createSentUser(connectedUser));
             }
             chats.add(chat);
         }
         user.setChats(chats);
-    }
-    private SentUser createSentUser(UserEntity user){
-        return new SentUser(user.getId(),
-                user.getName(),
-                user.getSurname(),
-                user.getUsername(),
-                user.getEmail(),
-                new HashSet<>());
     }
     private ResponseEntity<String> verifyRegistrationForm(RegistrationUser user){
         if(hasMissingValues(user.getName(),

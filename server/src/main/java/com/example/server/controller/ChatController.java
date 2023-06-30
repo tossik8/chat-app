@@ -1,6 +1,8 @@
 package com.example.server.controller;
 
+import com.example.server.entity.MessageEntity;
 import com.example.server.model.Message;
+import com.example.server.services.MessageService;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -12,13 +14,18 @@ import org.springframework.stereotype.Controller;
 public class ChatController {
 
     private final SimpMessagingTemplate simpMessagingTemplate;
+    private final MessageService messageService;
 
-    public ChatController(SimpMessagingTemplate simpMessagingTemplate) {
+    public ChatController(SimpMessagingTemplate simpMessagingTemplate, MessageService messageService) {
         this.simpMessagingTemplate = simpMessagingTemplate;
+        this.messageService = messageService;
     }
 
     @MessageMapping("/message")
     public void sendToChat(@Payload Message message){
-        simpMessagingTemplate.convertAndSendToUser(String.valueOf(message.getChatId()), "/queue/messages", message);
+        MessageEntity messageEntity = messageService.saveMessage(message);
+        simpMessagingTemplate.convertAndSendToUser(String.valueOf(message.getChatId()),
+                "/queue/messages", messageService.createSentMessage(messageEntity)
+        );
     }
 }
