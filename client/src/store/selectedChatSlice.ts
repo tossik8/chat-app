@@ -20,7 +20,12 @@ const selectedChatSlice = createSlice({
             state.title = payload
         },
         setMessages: (state, {payload}) => {
-            state.messages.push(payload)
+            if(Array.isArray(payload)){
+                state.messages.push(...payload)
+            }
+            else{
+                state.messages.push(payload)
+            }
         },
         clearMessages: (state) => {
             state.messages = []

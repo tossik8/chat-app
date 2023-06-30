@@ -1,6 +1,7 @@
 import { useDispatch } from "react-redux"
-import { IUser } from "../store/userSlice"
-import { setId, setTitle, setUsers } from "../store/selectedChatSlice"
+import { clearMessages, setId, setMessages, setTitle, setUsers } from "../store/selectedChatSlice"
+import MessageService from "../services/MessageService"
+import { IUser } from "../global/types"
 
 interface IChat{
   id: number,
@@ -13,6 +14,8 @@ const Chat = ({id, title, connectedUsers} : IChat) => {
   const activeStateColour = "bg-blue-200"
   const hoveredStateColour = "bg-stone-200"
   const handleClick = () => {
+    dispatch(clearMessages())
+    getMessages(id)
     dispatch(setId(id))
     dispatch(setUsers(connectedUsers))
     dispatch(setTitle(title))
@@ -22,6 +25,10 @@ const Chat = ({id, title, connectedUsers} : IChat) => {
     element?.classList.add(activeStateColour)
     element.getElementsByClassName("unread-messages-count")[0].setAttribute("data-value", "0")
     element.getElementsByClassName("unread-messages-count")[0].textContent = ""
+  }
+  async function getMessages(id: number){
+    const messages = await MessageService.getMessages(id)
+    dispatch(setMessages(messages.data))
   }
   const handleMouseOver = () => {
     const hoveredElement = document.getElementById(id.toString());

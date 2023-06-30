@@ -5,7 +5,7 @@ import Navigation from "../components/Navigation"
 import { RootState } from "../store/store"
 import { Client } from "@stomp/stompjs"
 import { useEffect, useRef } from "react"
-import { clearMessages, setMessages } from "../store/selectedChatSlice"
+import { setMessages } from "../store/selectedChatSlice"
 import { IMessage } from "../global/types"
 
 
@@ -42,7 +42,6 @@ const MainWindow = () => {
             }
         })
         client.current.activate()
-        dispatch(clearMessages())
     }, [id])
 
     return (
