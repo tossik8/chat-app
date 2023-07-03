@@ -20,7 +20,7 @@ public class UserController {
         return userService.createUser(user);
     }
     @PostMapping("/login")
-    public SentUser getUser(@RequestBody LoginUser user){
-        return userService.getUser(user);
+    public SentUser logInUser(@RequestBody LoginUser user){
+        return userService.logInUser(user);
     }
  }

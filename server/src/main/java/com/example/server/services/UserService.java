@@ -7,5 +7,5 @@ import com.example.server.model.SentUser;
 
 public interface UserService {
     SentUser createUser(RegistrationUser user);
-    SentUser getUser(LoginUser user);
+    SentUser logInUser(LoginUser user);
 }

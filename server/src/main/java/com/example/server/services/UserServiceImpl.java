@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService{
         throw new ResponseStatusException(HttpStatusCode.valueOf(response.getStatusCode().value()), response.getBody());
     }
     @Override
-    public SentUser getUser(LoginUser user){
+    public SentUser logInUser(LoginUser user){
         ResponseEntity<String> response = verifyLoginForm(user);
         if(response.getStatusCode().value() == 200){
             Optional<UserEntity> userEntity = userRepository.findByEmail(user.getEmail());
