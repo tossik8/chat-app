@@ -17,9 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -103,6 +101,15 @@ public class UserServiceImpl implements UserService{
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @Override
+    public List<SentUser> getUsers(String key) {
+        List<UserEntity> userEntities = userRepository.findUserEntitiesBySimilarity(key);
+        List<SentUser> users = new LinkedList<>();
+        userEntities.forEach(user -> users.add(SentUser.createSentUser(user)));
+        return users;
+    }
+
     public boolean hasMissingValues(String ...fields){
         for(String field : fields){
             if(field == null || field.isBlank()){

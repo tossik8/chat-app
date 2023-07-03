@@ -6,6 +6,7 @@ import com.example.server.model.SentUser;
 import com.example.server.services.UserService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 
 @CrossOrigin
 @RestController
@@ -23,4 +24,9 @@ public class UserController {
     public SentUser logInUser(@RequestBody LoginUser user){
         return userService.logInUser(user);
     }
+    @GetMapping("")
+    public List<SentUser> getUsers(@RequestParam String query){
+        return userService.getUsers(query);
+    }
+
  }
