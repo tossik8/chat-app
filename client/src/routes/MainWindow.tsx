@@ -65,7 +65,7 @@ const MainWindow = () => {
     <div className="grid grid-cols-[35%_1fr] h-screen max-h-[1425px] max-w-[2560px] mx-auto">
         <div>
             <Navigation/>
-            {chats !== null && chats.map(chat => {
+            {chats.map(chat => {
                 const users = chat.connectedUsers
                 if(chat.name === null){
                     return <Chat key={chat.id} id={chat.id} title={`${users[0]!.name} ${users[0]!.surname}`} connectedUsers={users}/>
