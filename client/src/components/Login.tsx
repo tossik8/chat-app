@@ -22,7 +22,7 @@ const Login = () => {
         const validEmail = isEmailValid(user.email)
         if(filled && validEmail){
             setIsLoading(true)
-            UserService.getUser(user).then((user) => {
+            UserService.logInUser(user).then((user) => {
                 setSession(user)
                 setUser({
                     email: "",

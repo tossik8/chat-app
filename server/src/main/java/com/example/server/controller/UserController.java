@@ -28,5 +28,4 @@ public class UserController {
     public List<SentUser> getUsers(@RequestParam String query){
         return userService.getUsers(query);
     }
-
  }
