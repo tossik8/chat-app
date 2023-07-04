@@ -6,13 +6,14 @@ import { RootState } from "../store/store"
 import { Client } from "@stomp/stompjs"
 import { useEffect, useRef } from "react"
 import { setMessages } from "../store/selectedChatSlice"
-import { IMessage, IUser } from "../global/types"
-import MessageService from "../services/MessageService"
+import { IMessage } from "../global/types"
+import { IUser } from "../store/userSlice"
 
 
 const MainWindow = () => {
     const { chats, id: userId } = useSelector((state: RootState) => state.user)
     const { id } = useSelector((state: RootState) => state.selectedChat)
+    const { foundUsers } = useSelector((state: RootState) => state.foundUsers)
     const dispatch = useDispatch()
     let client = useRef<Client>(null!)
     useEffect(() => {
@@ -22,9 +23,6 @@ const MainWindow = () => {
             onConnect: () => {
                 chats.forEach(chat => {
                     const article = document.getElementById(`${chat.id}`) as HTMLElement
-                    getMessages(chat.id).then((message : IMessage)=> {
-                        displayChatInfo(article, message.time, message.sender, message.text)
-                    })
                     client.current.subscribe(`/chat/${chat.id}/queue/messages`, (message) => {
                         const { text, time, sender } : IMessage = JSON.parse(message.body)
                         if(id === chat.id){
@@ -48,24 +46,16 @@ const MainWindow = () => {
         })
         client.current.activate()
     }, [id])
-
-    async function getMessages(chatId: number){
-        const messages = await MessageService.getMessages(chatId)
-        sessionStorage.setItem(`chat-${chatId}`,JSON.stringify(messages.data))
-        return messages.data.at(-1)
-    }
-
     function displayChatInfo(article: HTMLElement, time: string, sender: IUser, text: string){
         article.getElementsByClassName("time")[0]!.textContent = time.replace(/^.+T(\d{2}:\d{2}).+$/, "$1")
         article.getElementsByClassName("sender")[0]!.textContent = `${sender.name} ${sender.surname}:`
         article.getElementsByClassName("message")[0]!.textContent = text
     }
-
     return (
     <div className="grid grid-cols-[35%_1fr] h-screen max-h-[1425px] max-w-[2560px] mx-auto">
         <div>
             <Navigation/>
-            {chats.map(chat => {
+            {foundUsers.length !== 0? <p>hello</p> : chats.map(chat => {
                 const users = chat.connectedUsers
                 if(chat.name === null){
                     return <Chat key={chat.id} id={chat.id} title={`${users[0]!.name} ${users[0]!.surname}`} connectedUsers={users}/>

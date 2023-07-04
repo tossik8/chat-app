@@ -1,7 +1,15 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { IUser } from "../global/types";
 
-export const userSlice = createSlice({
+export interface IUser{
+    id: number,
+    name: string,
+    surname: string,
+    username: string,
+    email: string,
+    chats: {id: number, name: string, connectedUsers: IUser[]}[]
+}
+
+const userSlice = createSlice({
     name: "user",
     initialState: {
         id: -1,

@@ -1,6 +1,9 @@
 import { useDispatch } from "react-redux"
 import { clearMessages, setId, setMessages, setTitle, setUsers } from "../store/selectedChatSlice"
-import { IUser } from "../global/types"
+import { IUser } from "../store/userSlice"
+import { useEffect } from "react"
+import { IMessage } from "../global/types"
+import MessageService from "../services/MessageService"
 
 interface IChat{
   id: number,
@@ -22,7 +25,7 @@ const Chat = ({id, title, connectedUsers} : IChat) => {
     document.getElementsByClassName(activeStateColour)[0]?.classList.remove(activeStateColour)
     element?.classList.remove(hoveredStateColour)
     element?.classList.add(activeStateColour)
-    element.getElementsByClassName("unread-messages-count")[0].setAttribute("data-value", "0")
+    element.getElementsByClassName("unread-messages-count")[0]?.setAttribute("data-value", "0")
     element.getElementsByClassName("unread-messages-count")[0].textContent = ""
   }
   const handleMouseOver = () => {
@@ -38,6 +41,31 @@ const Chat = ({id, title, connectedUsers} : IChat) => {
   function displayLogo(title: string){
     const [first, second] = title.split(" ")
     return first && second ? first.charAt(0).toUpperCase() + second.charAt(0).toUpperCase() : first.charAt(0).toUpperCase()
+  }
+
+  useEffect(() => {
+    const article = document.getElementById(`${id}`) as HTMLElement
+    const messagesString = sessionStorage.getItem(`chat-${id}`)
+    if(messagesString){
+      const lastMessage : IMessage = JSON.parse(messagesString).at(-1)
+      displayChatInfo(article, lastMessage.time, lastMessage.sender, lastMessage.text)
+    }
+    else{
+      getMessages(id).then((message : IMessage)=> {
+        displayChatInfo(article, message.time, message.sender, message.text)
+      })
+    }
+  }, [])
+
+  function displayChatInfo(article: HTMLElement, time: string, sender: IUser, text: string){
+    article.getElementsByClassName("time")[0]!.textContent = time.replace(/^.+T(\d{2}:\d{2}).+$/, "$1")
+    article.getElementsByClassName("sender")[0]!.textContent = `${sender.name} ${sender.surname}:`
+    article.getElementsByClassName("message")[0]!.textContent = text
+  }
+  async function getMessages(chatId: number){
+    const messages = await MessageService.getMessages(chatId)
+    sessionStorage.setItem(`chat-${chatId}`, JSON.stringify(messages.data))
+    return messages.data.at(-1)
   }
 
   return (

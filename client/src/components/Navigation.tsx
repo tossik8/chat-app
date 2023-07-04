@@ -2,12 +2,15 @@ import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { useRef } from "react"
 import UserService from "../services/UserService"
+import { useDispatch } from "react-redux"
+import { setFoundUsers } from "../store/foundUsersSlice"
 
 const Navigation = () => {
   const inputRef = useRef<HTMLInputElement>(null!)
+  const dispatch = useDispatch()
   const handleChange = () => {
     UserService.getUsers(inputRef.current.value).then(message => {
-      console.log(message)
+      dispatch(setFoundUsers(message.data))
     })
   }
   return (
