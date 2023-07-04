@@ -43,9 +43,9 @@ const ChatWindow = ({client} : ChatWindowProps) => {
 
   return (
     <main className="relative bg-[url('/pexels-mudassir-ali-2680270.jpg')] bg-cover max-h-screen">
-      {users.length === 0? <p className="absolute top-1/2 left-[46%] text-white text-sm bg-gray-700/30 px-4 rounded-xl">Select a chat</p> :
+      {id === -1? <p className="absolute top-1/2 left-[46%] text-white text-sm bg-gray-700/30 px-4 rounded-xl">Select a chat</p> :
         <>
-          <div className="bg-white px-4 py-2 border-l border-stone-300 h-[5.3vh] max-h-[80px]">
+          <div className="bg-white px-4 py-2 border-l border-stone-300 h-[5.3vh] max-h-[80px] flex items-center">
             <p className="font-bold">{title}</p>
             {users.length === 1? null : <p className="text-xs text-stone-400">{users.length + 1} members</p>}
           </div>
