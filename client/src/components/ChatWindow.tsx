@@ -45,11 +45,11 @@ const ChatWindow = ({client} : ChatWindowProps) => {
     <main className="relative bg-[url('/pexels-mudassir-ali-2680270.jpg')] bg-cover max-h-screen">
       {users.length === 0? <p className="absolute top-1/2 left-[46%] text-white text-sm bg-gray-700/30 px-4 rounded-xl">Select a chat</p> :
         <>
-          <div className="bg-white px-4 py-2 border-l border-stone-300 h-[6.8vh] max-h-[96.917px]">
+          <div className="bg-white px-4 py-2 border-l border-stone-300 h-[5.3vh] max-h-[80px]">
             <p className="font-bold">{title}</p>
             {users.length === 1? null : <p className="text-xs text-stone-400">{users.length + 1} members</p>}
           </div>
-          <ul id="messages" className="px-4 h-[86.5vh] max-h-[1232.910px] pb-3 w-full overflow-y-auto scrollbar-thin scrollbar-track-gray-500 scrollbar-thumb-gray-700">{messages.map((message, i) => (
+          <ul id="messages" className="px-4 h-[88vh] max-h-[1232.910px] pb-3 w-full overflow-y-auto scrollbar-thin scrollbar-track-gray-500 scrollbar-thumb-gray-700">{messages.map((message, i) => (
             <li className="flex items-end gap-2" key={i}>
               <div className="h-8 w-8 rounded-3xl flex justify-center items-center text-white bg-gradient-to-b from-cyan-500 to-blue-500 select-none text-sm font-medium">{displayLogo(message.sender.name + " " + message.sender.surname)}</div>
               {message.sender.id === senderId?

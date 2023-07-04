@@ -2,8 +2,8 @@ import { useDispatch } from "react-redux"
 import { clearMessages, setId, setMessages, setTitle, setUsers } from "../store/selectedChatSlice"
 import { IUser } from "../store/userSlice"
 import { useEffect } from "react"
-import { IMessage } from "../global/types"
 import MessageService from "../services/MessageService"
+import { IMessage } from "../global/types"
 
 interface IChat{
   id: number,
@@ -47,12 +47,16 @@ const Chat = ({id, title, connectedUsers} : IChat) => {
     const article = document.getElementById(`${id}`) as HTMLElement
     const messagesString = sessionStorage.getItem(`chat-${id}`)
     if(messagesString){
-      const lastMessage : IMessage = JSON.parse(messagesString).at(-1)
-      displayChatInfo(article, lastMessage.time, lastMessage.sender, lastMessage.text)
+      const lastMessage = JSON.parse(messagesString).at(-1)
+      if(lastMessage){
+        displayChatInfo(article, lastMessage.time, lastMessage.sender, lastMessage.text)
+      }
     }
     else{
-      getMessages(id).then((message : IMessage)=> {
-        displayChatInfo(article, message.time, message.sender, message.text)
+      getMessages(id).then((message)=> {
+        if(message){
+          displayChatInfo(article, message.time, message.sender, message.text)
+        }
       })
     }
   }, [])
@@ -62,7 +66,7 @@ const Chat = ({id, title, connectedUsers} : IChat) => {
     article.getElementsByClassName("sender")[0]!.textContent = `${sender.name} ${sender.surname}:`
     article.getElementsByClassName("message")[0]!.textContent = text
   }
-  async function getMessages(chatId: number){
+  async function getMessages(chatId: number) : Promise<IMessage | undefined>{
     const messages = await MessageService.getMessages(chatId)
     sessionStorage.setItem(`chat-${chatId}`, JSON.stringify(messages.data))
     return messages.data.at(-1)
