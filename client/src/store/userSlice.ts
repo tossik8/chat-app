@@ -1,12 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { IChat } from "../global/types";
 
 export interface IUser{
-    id: number,
-    name: string,
-    surname: string,
-    username: string,
-    email: string,
-    chats: {id: number, name: string, connectedUsers: IUser[]}[]
+    id: number
+    name: string
+    surname: string
+    username: string
+    email: string
+    chats: IChat[]
 }
 
 const userSlice = createSlice({
