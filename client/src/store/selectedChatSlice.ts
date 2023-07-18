@@ -29,16 +29,13 @@ const selectedChatSlice = createSlice({
         },
         setMessages: (state, {payload}) => {
             if(Array.isArray(payload)){
-                state.messages.push(...payload)
+                state.messages = payload
             }
             else{
                 state.messages.push(payload)
             }
-        },
-        clearMessages: (state) => {
-            state.messages = []
         }
     }
 })
-export const { setId, setUsers, setTitle, setMessages, clearMessages } = selectedChatSlice.actions
+export const { setId, setUsers, setTitle, setMessages } = selectedChatSlice.actions
 export default selectedChatSlice

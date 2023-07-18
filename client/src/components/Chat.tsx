@@ -1,5 +1,5 @@
 import { useDispatch } from "react-redux"
-import { clearMessages, setId, setMessages, setTitle, setUsers } from "../store/selectedChatSlice"
+import { setId, setMessages, setTitle, setUsers } from "../store/selectedChatSlice"
 import { IUser } from "../store/userSlice"
 import { useEffect } from "react"
 import MessageService from "../services/MessageService"
@@ -16,7 +16,6 @@ const Chat = ({id, title, connectedUsers} : IChat) => {
   const activeStateColour = "bg-blue-200"
   const hoveredStateColour = "bg-stone-200"
   const handleClick = () => {
-    dispatch(clearMessages())
     dispatch(setMessages(JSON.parse(sessionStorage.getItem(`chat-${id}`)!)))
     dispatch(setId(id))
     dispatch(setUsers(connectedUsers))
