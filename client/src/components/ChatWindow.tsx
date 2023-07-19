@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/store"
 import { Client } from "@stomp/stompjs"
+import { displayLogo } from "./Chat"
 
 interface ChatWindowProps{
   client: React.MutableRefObject<Client>
@@ -31,10 +32,6 @@ const ChatWindow = ({client} : ChatWindowProps) => {
     if(e.ctrlKey && e.key === "Enter"){
       handleClick()
     }
-  }
-  function displayLogo(sender: string){
-    const [name, surname] = sender.split(" ")
-    return name.charAt(0).toUpperCase() + surname.charAt(0).toUpperCase()
   }
 
   useEffect(() => {

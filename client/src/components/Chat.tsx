@@ -37,11 +37,6 @@ const Chat = ({id, title, connectedUsers} : IChat) => {
     document.getElementById(`chat-${id.toString()}`)?.classList.remove(hoveredStateColour);
   }
 
-  function displayLogo(title: string){
-    const [first, second] = title.split(" ")
-    return first && second ? first.charAt(0).toUpperCase() + second.charAt(0).toUpperCase() : first.charAt(0).toUpperCase()
-  }
-
   useEffect(() => {
     const article = document.getElementById(`chat-${id}`) as HTMLElement
     const messagesString = sessionStorage.getItem(`chat-${id}`)
@@ -89,6 +84,10 @@ const Chat = ({id, title, connectedUsers} : IChat) => {
       </div>
     </article>
   )
+}
+export function displayLogo(title: string){
+  const [first, second] = title.split(" ")
+  return first && second ? first.charAt(0).toUpperCase() + second.charAt(0).toUpperCase() : first.charAt(0).toUpperCase()
 }
 
 export default Chat
