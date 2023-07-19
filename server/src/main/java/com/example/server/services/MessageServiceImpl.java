@@ -27,7 +27,7 @@ public class MessageServiceImpl implements MessageService{
     }
 
     @Override
-    public MessageEntity saveMessage(Message message) {
+    public SentMessage saveMessage(Message message) {
         MessageEntity messageEntity = new MessageEntity();
         messageEntity.setSentTime(LocalDateTime.now());
         messageEntity.setText(message.getText());
@@ -36,7 +36,7 @@ public class MessageServiceImpl implements MessageService{
         Optional<UserEntity> userEntity = userRepository.findById(message.getSenderId());
         userEntity.ifPresent(messageEntity::setSender);
         messageRepository.save(messageEntity);
-        return messageEntity;
+        return SentMessage.createSentMessage(messageEntity);
     }
 
     @Override

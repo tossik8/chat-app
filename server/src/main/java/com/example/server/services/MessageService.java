@@ -7,6 +7,6 @@ import com.example.server.model.SentMessage;
 import java.util.List;
 
 public interface MessageService {
-    MessageEntity saveMessage(Message message);
+    SentMessage saveMessage(Message message);
     List<SentMessage> getMessages(long id);
 }
