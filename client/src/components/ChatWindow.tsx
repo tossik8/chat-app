@@ -53,14 +53,14 @@ const ChatWindow = ({client} : ChatWindowProps) => {
             <li className="grid grid-cols-[32px_50%] items-end gap-2" key={i}>
               <div className="h-8 w-8 rounded-3xl flex justify-center items-center text-white bg-gradient-to-b from-cyan-500 to-blue-500 select-none text-sm font-medium">{displayLogo(message.sender.name + " " + message.sender.surname)}</div>
               {message.sender.id === senderId?
-                <div className="p-1 rounded-md bg-blue-200 mt-3 relative pr-8 w-fit">
-                  <p className="break-all whitespace-pre-wrap inline-block">{message.text}</p>
-                  <span className="text-xs select-none text-neutral-500 absolute bottom-0 right-0">{message.time.replace(/^.+T(\d{2}:\d{2}).+$/, "$1")}</span>
+                <div className="p-1 rounded-md bg-blue-200 mt-3 relative pr-9 w-fit">
+                  <p className="break-all whitespace-pre-wrap mr-1">{message.text}</p>
+                  <span className="text-xs select-none text-neutral-500 absolute bottom-0 right-1">{message.time.replace(/^.+T(\d{2}:\d{2}).+$/, "$1")}</span>
                 </div>
                   :
-                <div className="p-1 rounded-md bg-white mt-3 relative pr-8 w-fit">
-                  <p className="break-all whitespace-pre-wrap inline-block">{message.text}</p>
-                  <span className="text-xs select-none text-neutral-500 absolute bottom-0 right-0">{message.time.replace(/^.+T(\d{2}:\d{2}).+$/, "$1")}</span>
+                <div className="p-1 rounded-md bg-white mt-3 relative pr-9 w-fit">
+                  <p className="break-all whitespace-pre-wrap mr-1">{message.text}</p>
+                  <span className="text-xs select-none text-neutral-500 absolute bottom-0 right-1">{message.time.replace(/^.+T(\d{2}:\d{2}).+$/, "$1")}</span>
                 </div>
                 }
             </li>))}
