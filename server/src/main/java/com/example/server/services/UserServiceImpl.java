@@ -45,20 +45,15 @@ public class UserServiceImpl implements UserService{
     }
     @Override
     public SentUser logInUser(LoginUser user){
-        ResponseEntity<String> response = verifyLoginForm(user);
-        if(response.getStatusCode().value() == 200){
-            Optional<UserEntity> userEntity = userRepository.findByEmail(user.getEmail());
-            if(userEntity.isEmpty()) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
-            }
-            if(!passwordEncoder.matches(user.getPassword(), userEntity.get().getPassword())){
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Incorrect password");
-            }
-            SentUser sentUser = SentUser.createSentUser(userEntity.get());
-            addConnectedUsers(sentUser, userEntity.get());
-            return sentUser;
+        ResponseEntity<UserEntity> response;
+        try{
+             response = verifyLoginForm(user);
+        } catch (ResponseStatusException e){
+            throw new ResponseStatusException(e.getStatusCode(), e.getReason());
         }
-        throw new ResponseStatusException(HttpStatusCode.valueOf(response.getStatusCode().value()), response.getBody());
+        SentUser sentUser = SentUser.createSentUser(Objects.requireNonNull(response.getBody()));
+        addConnectedUsers(sentUser, response.getBody());
+        return sentUser;
     }
 
     private void addConnectedUsers(SentUser user, UserEntity userEntity){
@@ -92,14 +87,21 @@ public class UserServiceImpl implements UserService{
         }
         return new ResponseEntity<>(HttpStatus.OK);
     }
-    private ResponseEntity<String> verifyLoginForm(LoginUser user){
+    private ResponseEntity<UserEntity> verifyLoginForm(LoginUser user) throws ResponseStatusException{
         if(hasMissingValues(user.getEmail(), user.getPassword())){
-            return new ResponseEntity<>("All fields must be filled", HttpStatus.UNAUTHORIZED);
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "All fields must be filled");
         }
         if(!user.getEmail().matches("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\\.[a-zA-Z0-9-]+)*$")){
-            return new ResponseEntity<>("The email is invalid", HttpStatus.UNAUTHORIZED);
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "The email is invalid");
         }
-        return new ResponseEntity<>(HttpStatus.OK);
+        Optional<UserEntity> userEntity = userRepository.findByEmail(user.getEmail());
+        if(userEntity.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+        }
+        if(!passwordEncoder.matches(user.getPassword(), userEntity.get().getPassword())){
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Incorrect password");
+        }
+        return new ResponseEntity<>(userEntity.get(), HttpStatus.OK);
     }
 
     @Override
