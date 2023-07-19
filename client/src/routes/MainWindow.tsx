@@ -22,7 +22,7 @@ const MainWindow = () => {
             brokerURL: "ws://localhost:8080/ws",
             onConnect: () => {
                 chats.forEach(chat => {
-                    const article = document.getElementById(`${chat.id}`) as HTMLElement
+                    const article = document.getElementById(`chat-${chat.id}`) as HTMLElement
                     client.current.subscribe(`/chat/${chat.id}/queue/messages`, (message) => {
                         const { text, time, sender } : IMessage = JSON.parse(message.body)
                         if(id === chat.id){
