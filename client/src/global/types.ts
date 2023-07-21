@@ -10,3 +10,7 @@ export interface IChat{
     name: string
     connectedUsers: IUser[]
 }
+export interface IConnectionMessage{
+    chat: IChat
+    message: IMessage
+}

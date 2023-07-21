@@ -5,9 +5,10 @@ import Navigation from "../components/Navigation"
 import { RootState } from "../store/store"
 import { Client } from "@stomp/stompjs"
 import { useEffect, useRef } from "react"
-import { setMessages } from "../store/selectedChatSlice"
-import { IMessage } from "../global/types"
-import { IUser } from "../store/userSlice"
+import { setId, setMessages, setUsers } from "../store/selectedChatSlice"
+import { IConnectionMessage, IMessage } from "../global/types"
+import { IUser, setChats } from "../store/userSlice"
+import FoundUser from "../components/FoundUser"
 
 
 const MainWindow = () => {
@@ -21,6 +22,17 @@ const MainWindow = () => {
         client.current = new Client({
             brokerURL: "ws://localhost:8080/ws",
             onConnect: () => {
+                client.current.subscribe(`/chat/${userId}/queue/connections`, (message) => {
+                    const { chat, message: parsedMessage } : IConnectionMessage = JSON.parse(message.body)
+                    chat.connectedUsers = chat.connectedUsers.filter((user: IUser) => user.id !== userId)
+                    dispatch(setChats([...chats, chat]))
+                    if(userId === parsedMessage.sender.id){
+                        dispatch(setId(chat.id))
+                        dispatch(setUsers(chat.connectedUsers))
+                        dispatch(setMessages(parsedMessage))
+                    }
+                    sessionStorage.setItem(`chat-${chat.id}`, JSON.stringify([parsedMessage]))
+                })
                 chats.forEach(chat => {
                     const article = document.getElementById(`chat-${chat.id}`) as HTMLElement
                     client.current.subscribe(`/chat/${chat.id}/queue/messages`, (message) => {
@@ -28,9 +40,7 @@ const MainWindow = () => {
                         if(id === chat.id){
                             dispatch(setMessages({text, sender, time}))
                         }
-                        const messages = JSON.parse(sessionStorage.getItem(`chat-${chat.id}`)!)
-                        messages.push({text, sender, time})
-                        sessionStorage.setItem(`chat-${chat.id}`,JSON.stringify(messages))
+                        updateSessionStorage(chat.id, text, sender, time)
                         displayChatInfo(article, time, sender, text)
                         if(userId !== sender.id && id !== chat.id){
                              const counter = article.getElementsByClassName("unread-messages-count")[0]
@@ -45,23 +55,32 @@ const MainWindow = () => {
             }
         })
         client.current.activate()
-    }, [id])
+    }, [id, chats])
     function displayChatInfo(article: HTMLElement, time: string, sender: IUser, text: string){
-        article.getElementsByClassName("time")[0]!.textContent = time.replace(/^.+T(\d{2}:\d{2}).+$/, "$1")
-        article.getElementsByClassName("sender")[0]!.textContent = `${sender.name} ${sender.surname}:`
-        article.getElementsByClassName("message")[0]!.textContent = text
+        if(article){
+            article.getElementsByClassName("time")[0]!.textContent = time.replace(/^.+T(\d{2}:\d{2}).+$/, "$1")
+            article.getElementsByClassName("sender")[0]!.textContent = `${sender.name} ${sender.surname}:`
+            article.getElementsByClassName("message")[0]!.textContent = text
+        }
     }
+
+    function updateSessionStorage(id: number, text: string, sender: IUser, time: string){
+        const messages = JSON.parse(sessionStorage.getItem(`chat-${id}`)!)
+        messages.push({text, sender, time})
+        sessionStorage.setItem(`chat-${id}`, JSON.stringify(messages))
+    }
+
     return (
     <div className="grid grid-cols-[35%_1fr] h-screen max-h-[1425px] max-w-[2560px] mx-auto">
         <div>
             <Navigation/>
             <div className="max-h-[1400px] h-[94.59vh] overflow-y-auto scrollbar-thin scrollbar-track-gray-500 scrollbar-thumb-gray-700">
-                {foundUsers.length !== 0? <p>hello</p> : chats.map(chat => {
+                {foundUsers.length !== 0? foundUsers.map(foundUser => <FoundUser key={foundUser.id} id={foundUser.id} title={`${foundUser.name} ${foundUser.surname}`} username={foundUser.username}/>) : chats.map(chat => {
                     const users = chat.connectedUsers
-                    if(chat.name === null){
-                        return <Chat key={chat.id} id={chat.id} title={`${users[0]!.name} ${users[0]!.surname}`} connectedUsers={users}/>
+                    if(chat.name){
+                        return <Chat key={chat.id} id={chat.id} title={chat.name} connectedUsers={users}/>
                     }
-                    return <Chat key={chat.id} id={chat.id} title={chat.name} connectedUsers={users}/>
+                    return <Chat key={chat.id} id={chat.id} title={`${users[0]!.name} ${users[0]!.surname}`} connectedUsers={users}/>
                 })}
             </div>
         </div>

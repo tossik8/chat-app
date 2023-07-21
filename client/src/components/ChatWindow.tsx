@@ -3,6 +3,8 @@ import { useSelector } from "react-redux"
 import { RootState } from "../store/store"
 import { Client } from "@stomp/stompjs"
 import { displayLogo } from "./Chat"
+import { useDispatch } from "react-redux"
+import { setId } from "../store/foundUsersSlice"
 
 interface ChatWindowProps{
   client: React.MutableRefObject<Client>
@@ -11,6 +13,8 @@ interface ChatWindowProps{
 const ChatWindow = ({client} : ChatWindowProps) => {
   const { id, title, users, messages } = useSelector((state: RootState) => state.selectedChat)
   const { id: senderId } = useSelector((state: RootState) => state.user)
+  const { id: foundUserId } = useSelector((state: RootState) => state.foundUsers)
+  const dispatch = useDispatch()
   const [ input, setInput ] = useState("")
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const textarea = document.getElementsByTagName("textarea")[0]
@@ -21,7 +25,13 @@ const ChatWindow = ({client} : ChatWindowProps) => {
 
   const handleClick = () => {
     if(input.trim()){
-      client.current.publish({destination: "/app/message", body: JSON.stringify({chatId: id, text: input.trim(), senderId})})
+      if(foundUserId !== -1){
+        client.current.publish({destination: "/app/connection", body: JSON.stringify({receiverId: foundUserId, text: input.trim(), senderId})})
+        dispatch(setId(-1))
+      }
+      else{
+        client.current.publish({destination: "/app/message", body: JSON.stringify({chatId: id, text: input.trim(), senderId})})
+      }
       setInput("")
       document.getElementsByTagName("textarea")[0].style.height = "20px"
       document.getElementById("message-textarea")!.focus()
@@ -44,7 +54,7 @@ const ChatWindow = ({client} : ChatWindowProps) => {
         <>
           <div className="bg-white px-4 py-2 border-l border-stone-300 h-[5.3vh] max-h-[80px] flex items-center">
             <p className="font-bold">{title}</p>
-            {users.length === 1? null : <p className="text-xs text-stone-400">{users.length + 1} members</p>}
+            {users.length <= 1? null : <p className="text-xs text-stone-400">{users.length + 1} members</p>}
           </div>
           <ul id="messages" className="px-4 h-[88vh] max-h-[1249px] pb-3 overflow-y-auto scrollbar-thin scrollbar-track-gray-500 scrollbar-thumb-gray-700">{messages.map((message, i) => (
             <li className="grid grid-cols-[32px_50%] items-end gap-2" key={i}>
