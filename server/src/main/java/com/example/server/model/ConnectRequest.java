@@ -1,12 +1,10 @@
 package com.example.server.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
-public class Message {
-    private long chatId;
+public class ConnectRequest {
     private long senderId;
+    private long receiverId;
     private String text;
 }

@@ -1,7 +1,7 @@
 package com.example.server.controller;
 
-import com.example.server.model.Message;
-import com.example.server.model.SentMessage;
+import com.example.server.model.*;
+import com.example.server.services.ChatService;
 import com.example.server.services.MessageService;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -14,10 +14,12 @@ public class ChatController {
 
     private final SimpMessagingTemplate simpMessagingTemplate;
     private final MessageService messageService;
+    private final ChatService chatService;
 
-    public ChatController(SimpMessagingTemplate simpMessagingTemplate, MessageService messageService) {
+    public ChatController(SimpMessagingTemplate simpMessagingTemplate, MessageService messageService, ChatService chatService) {
         this.simpMessagingTemplate = simpMessagingTemplate;
         this.messageService = messageService;
+        this.chatService = chatService;
     }
 
     @MessageMapping("/message")
@@ -25,5 +27,16 @@ public class ChatController {
         SentMessage sentMessage = messageService.saveMessage(message);
         simpMessagingTemplate.convertAndSendToUser(String.valueOf(message.getChatId()),
                 "/queue/messages", sentMessage);
+    }
+    @MessageMapping("/connection")
+    public void connectUsers(@Payload ConnectRequest connectRequest){
+        SentChat chat = chatService.saveChat(connectRequest);
+        Message message = new Message(chat.getId(), connectRequest.getSenderId(), connectRequest.getText());
+        SentMessage sentMessage = messageService.saveMessage(message);
+        ConnectResponse response = new ConnectResponse(sentMessage, chat);
+        simpMessagingTemplate.convertAndSendToUser(String.valueOf(connectRequest.getSenderId()),
+                "/queue/connections", response);
+        simpMessagingTemplate.convertAndSendToUser(String.valueOf(connectRequest.getReceiverId()),
+                "/queue/connections", response);
     }
 }

@@ -5,8 +5,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class Message {
-    private long chatId;
-    private long senderId;
-    private String text;
+public class ConnectResponse {
+    private SentMessage message;
+    private SentChat chat;
 }

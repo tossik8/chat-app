@@ -22,6 +22,6 @@ public class SentUser {
                 user.getSurname(),
                 user.getUsername(),
                 user.getEmail(),
-                new HashSet<>());
+                new HashSet<>() );
     }
 }
