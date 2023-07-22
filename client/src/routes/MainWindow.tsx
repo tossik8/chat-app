@@ -18,7 +18,9 @@ const MainWindow = () => {
     const dispatch = useDispatch()
     let client = useRef<Client>(null!)
     useEffect(() => {
-        client.current?.deactivate()
+        if(client.current?.connected){
+            client.current.deactivate()
+        }
         client.current = new Client({
             brokerURL: "ws://localhost:8080/ws",
             onConnect: () => {
