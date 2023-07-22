@@ -13,18 +13,25 @@ interface IChat{
   connectedUsers: IUser[]
 }
 
+const activeStateColour = "bg-blue-200"
+const hoveredStateColour = "bg-stone-200"
+
+export function changeActiveElementColour(id: string){
+  const element = document.getElementById(id) as HTMLElement
+  element?.classList.remove(hoveredStateColour)
+  element?.classList.add(activeStateColour)
+}
+
 const Chat = ({id, title, connectedUsers} : IChat) => {
   const dispatch = useDispatch()
   const { id : chatId } = useSelector((state: RootState) => state.selectedChat)
-  const activeStateColour = "bg-blue-200"
-  const hoveredStateColour = "bg-stone-200"
   const handleClick = () => {
     dispatch(setMessages(JSON.parse(sessionStorage.getItem(`chat-${id}`)!)))
     dispatch(setId(id))
     dispatch(setUsers(connectedUsers))
     dispatch(setTitle(title))
     document.getElementsByClassName(activeStateColour)[0]?.classList.remove(activeStateColour)
-    changeActiveElementColour()
+    changeActiveElementColour(`chat-${id}`)
     const element = document.getElementById(`chat-${id}`) as HTMLElement
     element.getElementsByClassName("unread-messages-count")[0]?.setAttribute("data-value", "0")
     element.getElementsByClassName("unread-messages-count")[0].textContent = ""
@@ -57,15 +64,10 @@ const Chat = ({id, title, connectedUsers} : IChat) => {
       })
     }
     if(id === chatId){
-      changeActiveElementColour()
+      changeActiveElementColour(`chat-${id}`)
     }
   }, [])
 
-  function changeActiveElementColour(){
-    const element = document.getElementById(`chat-${id}`) as HTMLElement
-    element?.classList.remove(hoveredStateColour)
-    element?.classList.add(activeStateColour)
-  }
 
   function displayChatInfo(article: HTMLElement, time: string, sender: IUser, text: string){
     article.getElementsByClassName("time")[0]!.textContent = time.replace(/^.+T(\d{2}:\d{2}).+$/, "$1")
