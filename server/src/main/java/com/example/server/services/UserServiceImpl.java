@@ -23,10 +23,12 @@ import java.util.*;
 public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
+    private final MessageService messageService;
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, MessageService messageService) {
         this.userRepository = userRepository;
+        this.messageService = messageService;
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
@@ -59,7 +61,8 @@ public class UserServiceImpl implements UserService{
     private void addConnectedUsers(SentUser user, UserEntity userEntity){
         Set<SentChat> chats = new HashSet<>();
         for(ChatEntity chatEntity : userEntity.getChats()){
-            SentChat chat = new SentChat(chatEntity.getId(), chatEntity.getName(), new HashSet<>());
+            SentChat chat = new SentChat(chatEntity.getId(), chatEntity.getName(), new HashSet<>(),
+                    messageService.getMessages(chatEntity.getId()));
             for(UserEntity connectedUser :
                     userRepository.findUserEntitiesByChatsIdAndIdNot(chatEntity.getId(), user.getId())){
                 chat.getConnectedUsers().add(SentUser.createSentUser(connectedUser));

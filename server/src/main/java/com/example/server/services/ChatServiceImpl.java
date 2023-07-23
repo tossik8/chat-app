@@ -9,6 +9,7 @@ import com.example.server.repository.ChatRepository;
 import com.example.server.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -40,6 +41,6 @@ public class ChatServiceImpl implements ChatService {
             userRepository.save(receiver);
             connectedUsers.add(SentUser.createSentUser(receiver));
         });
-        return new SentChat(chatEntity.getId(), null, connectedUsers);
+        return new SentChat(chatEntity.getId(), null, connectedUsers, new ArrayList<>());
     }
 }

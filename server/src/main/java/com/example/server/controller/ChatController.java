@@ -33,10 +33,10 @@ public class ChatController {
         SentChat chat = chatService.saveChat(connectRequest);
         Message message = new Message(chat.getId(), connectRequest.getSenderId(), connectRequest.getText());
         SentMessage sentMessage = messageService.saveMessage(message);
-        ConnectResponse response = new ConnectResponse(sentMessage, chat);
+        chat.getMessages().add(sentMessage);
         simpMessagingTemplate.convertAndSendToUser(String.valueOf(connectRequest.getSenderId()),
-                "/queue/connections", response);
+                "/queue/connections", chat);
         simpMessagingTemplate.convertAndSendToUser(String.valueOf(connectRequest.getReceiverId()),
-                "/queue/connections", response);
+                "/queue/connections", chat);
     }
 }
