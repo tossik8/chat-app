@@ -2,15 +2,15 @@ import { useDispatch } from "react-redux"
 import { setId, setMessages, setTitle, setUsers } from "../store/selectedChatSlice"
 import { IUser } from "../store/userSlice"
 import { useEffect } from "react"
-import MessageService from "../services/MessageService"
 import { IMessage } from "../global/types"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/store"
 
 interface IChat{
-  id: number,
-  title: string,
+  id: number
+  title: string
   connectedUsers: IUser[]
+  messages: IMessage[]
 }
 
 const activeStateColour = "bg-blue-200"
@@ -22,11 +22,11 @@ export function changeActiveElementColour(id: string){
   element?.classList.add(activeStateColour)
 }
 
-const Chat = ({id, title, connectedUsers} : IChat) => {
+const Chat = ({id, title, connectedUsers, messages} : IChat) => {
   const dispatch = useDispatch()
   const { id : chatId } = useSelector((state: RootState) => state.selectedChat)
   const handleClick = () => {
-    dispatch(setMessages(JSON.parse(sessionStorage.getItem(`chat-${id}`)!)))
+    dispatch(setMessages(messages))
     dispatch(setId(id))
     dispatch(setUsers(connectedUsers))
     dispatch(setTitle(title))
@@ -49,19 +49,8 @@ const Chat = ({id, title, connectedUsers} : IChat) => {
 
   useEffect(() => {
     const article = document.getElementById(`chat-${id}`) as HTMLElement
-    const messagesString = sessionStorage.getItem(`chat-${id}`)
-    if(messagesString){
-      const lastMessage = JSON.parse(messagesString).at(-1)
-      if(lastMessage){
-        displayChatInfo(article, lastMessage.time, lastMessage.sender, lastMessage.text)
-      }
-    }
-    else{
-      getMessages(id).then((message)=> {
-        if(message){
-          displayChatInfo(article, message.time, message.sender, message.text)
-        }
-      })
+    if(messages.length !== 0){
+      displayChatInfo(article, messages.at(-1)!.time, messages.at(-1)!.sender, messages.at(-1)!.text)
     }
     if(id === chatId){
       changeActiveElementColour(`chat-${id}`)
@@ -73,11 +62,6 @@ const Chat = ({id, title, connectedUsers} : IChat) => {
     article.getElementsByClassName("time")[0]!.textContent = time.replace(/^.+T(\d{2}:\d{2}).+$/, "$1")
     article.getElementsByClassName("sender")[0]!.textContent = `${sender.name} ${sender.surname}:`
     article.getElementsByClassName("message")[0]!.textContent = text
-  }
-  async function getMessages(chatId: number) : Promise<IMessage | undefined>{
-    const messages = await MessageService.getMessages(chatId)
-    sessionStorage.setItem(`chat-${chatId}`, JSON.stringify(messages.data))
-    return messages.data.at(-1)
   }
 
   return (

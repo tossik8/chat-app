@@ -9,8 +9,5 @@ export interface IChat{
     id: number
     name: string
     connectedUsers: IUser[]
-}
-export interface IConnectionMessage{
-    chat: IChat
-    message: IMessage
+    messages: IMessage[]
 }

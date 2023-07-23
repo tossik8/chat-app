@@ -38,9 +38,13 @@ const userSlice = createSlice({
         },
         setChats: (state, {payload}) => {
             state.chats = payload
+        },
+        updateChat: (state, {payload}) => {
+            const index = state.chats.findIndex(chat => chat.id === payload.id)
+            state.chats[index] = payload.chat
         }
     }
 })
 
-export const { setId, setName, setSurname, setUsername, setEmail, setChats } = userSlice.actions
+export const { setId, setName, setSurname, setUsername, setEmail, setChats, updateChat } = userSlice.actions
 export default userSlice

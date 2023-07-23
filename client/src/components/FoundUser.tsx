@@ -28,7 +28,7 @@ const FoundUser = ({id, title, username} : IFoundUser) => {
             dispatch(setId(id))
         }
         else{
-            dispatch(setMessages(JSON.parse(sessionStorage.getItem(`chat-${chatsWithUser[0].id}`)!)))
+            dispatch(setMessages(chatsWithUser[0].messages))
             dispatch(setChatId(chatsWithUser[0].id))
             dispatch(setUsers(chatsWithUser[0].connectedUsers))
         }

@@ -1,20 +1,21 @@
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/store"
 import { Client } from "@stomp/stompjs"
-import { displayLogo } from "./Chat"
 import { useDispatch } from "react-redux"
 import { setId } from "../store/foundUsersSlice"
+import MessagesSection from "./MessagesSection"
+import { IChat, IMessage } from "../global/types"
+import { IUser, setChats, updateChat } from "../store/userSlice"
+import { setId as setChatId, setMessages, setUsers } from "../store/selectedChatSlice"
 
-interface ChatWindowProps{
-  client: React.MutableRefObject<Client>
-}
 
-const ChatWindow = ({client} : ChatWindowProps) => {
-  const { id, title, users, messages } = useSelector((state: RootState) => state.selectedChat)
-  const { id: senderId } = useSelector((state: RootState) => state.user)
+const ChatWindow = () => {
+  const { id, title, users } = useSelector((state: RootState) => state.selectedChat)
+  const { id: userId, chats } = useSelector((state: RootState) => state.user)
   const { id: foundUserId } = useSelector((state: RootState) => state.foundUsers)
   const dispatch = useDispatch()
+  let client = useRef<Client>(null!)
   const [ input, setInput ] = useState("")
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const textarea = document.getElementsByTagName("textarea")[0]
@@ -26,11 +27,11 @@ const ChatWindow = ({client} : ChatWindowProps) => {
   const handleClick = () => {
     if(input.trim()){
       if(foundUserId !== -1){
-        client.current.publish({destination: "/app/connection", body: JSON.stringify({receiverId: foundUserId, text: input.trim(), senderId})})
+        client.current.publish({destination: "/app/connection", body: JSON.stringify({receiverId: foundUserId, text: input.trim(), senderId: userId})})
         dispatch(setId(-1))
       }
       else{
-        client.current.publish({destination: "/app/message", body: JSON.stringify({chatId: id, text: input.trim(), senderId})})
+        client.current.publish({destination: "/app/message", body: JSON.stringify({chatId: id, text: input.trim(), senderId: userId})})
       }
       setInput("")
       document.getElementsByTagName("textarea")[0].style.height = "20px"
@@ -45,8 +46,55 @@ const ChatWindow = ({client} : ChatWindowProps) => {
   }
 
   useEffect(() => {
-    document.getElementById("messages")?.scrollTo({top: document.getElementById("messages")?.scrollHeight, left: 0, behavior: "smooth"})
-  }, [messages])
+    if(client.current?.connected){
+      client.current.deactivate()
+    }
+    client.current = new Client({
+        brokerURL: "ws://localhost:8080/ws",
+        onConnect: () => {
+            client.current.subscribe(`/chat/${userId}/queue/connections`, (message) => {
+                const chat : IChat = JSON.parse(message.body)
+                chat.connectedUsers = chat.connectedUsers.filter((user: IUser) => user.id !== userId)
+                dispatch(setChats([...chats, chat]))
+                if(userId === chat.messages[0].sender.id){
+                    dispatch(setChatId(chat.id))
+                    dispatch(setUsers(chat.connectedUsers))
+                    dispatch(setMessages(chat.messages[0]))
+                }
+            })
+            chats.forEach(chat => {
+                const article = document.getElementById(`chat-${chat.id}`) as HTMLElement
+                client.current.subscribe(`/chat/${chat.id}/queue/messages`, (message) => {
+                    const { text, time, sender } : IMessage = JSON.parse(message.body)
+                    if(id === chat.id){
+                        dispatch(setMessages({text, sender, time}))
+                    }
+                    const chatCopy = JSON.parse(JSON.stringify(chat))
+                    chatCopy.messages.push({text, time, sender})
+                    dispatch(updateChat({id: chat.id, chat: chatCopy}))
+                    displayChatInfo(article, time, sender, text)
+                    if(article && userId !== sender.id && id !== chat.id){
+                        const counter = article.getElementsByClassName("unread-messages-count")[0]
+                        const num = +counter.getAttribute("data-value")! + 1
+                        counter.setAttribute("data-value", `${num}`)
+                        if(num !== 0){
+                            counter.textContent = `${num}`
+                        }
+                    }
+                })
+            })
+        }
+    })
+    client.current.activate()
+  }, [id, chats])
+
+  function displayChatInfo(article: HTMLElement, time: string, sender: IUser, text: string){
+    if(article){
+        article.getElementsByClassName("time")[0]!.textContent = time.replace(/^.+T(\d{2}:\d{2}).+$/, "$1")
+        article.getElementsByClassName("sender")[0]!.textContent = `${sender.name} ${sender.surname}:`
+        article.getElementsByClassName("message")[0]!.textContent = text
+    }
+}
 
   return (
     <main className="relative bg-[url('/pexels-mudassir-ali-2680270.jpg')] bg-cover max-h-screen">
@@ -56,22 +104,7 @@ const ChatWindow = ({client} : ChatWindowProps) => {
             <p className="font-bold">{title}</p>
             {users.length <= 1? null : <p className="text-xs text-stone-400">{users.length + 1} members</p>}
           </div>
-          <ul id="messages" className="px-4 h-[88vh] max-h-[1249px] pb-3 overflow-y-auto scrollbar-thin scrollbar-track-gray-500 scrollbar-thumb-gray-700">{messages.map((message, i) => (
-            <li className="grid grid-cols-[32px_50%] items-end gap-2" key={i}>
-              <div className="h-8 w-8 rounded-3xl flex justify-center items-center text-white bg-gradient-to-b from-cyan-500 to-blue-500 select-none text-sm font-medium">{displayLogo(message.sender.name + " " + message.sender.surname)}</div>
-              {message.sender.id === senderId?
-                <div className="p-1 rounded-md bg-blue-200 mt-3 relative pr-9 w-fit">
-                  <p className="break-all whitespace-pre-wrap mr-1">{message.text}</p>
-                  <span className="text-xs select-none text-neutral-500 absolute bottom-0 right-1">{message.time.replace(/^.+T(\d{2}:\d{2}).+$/, "$1")}</span>
-                </div>
-                  :
-                <div className="p-1 rounded-md bg-white mt-3 relative pr-9 w-fit">
-                  <p className="break-all whitespace-pre-wrap mr-1">{message.text}</p>
-                  <span className="text-xs select-none text-neutral-500 absolute bottom-0 right-1">{message.time.replace(/^.+T(\d{2}:\d{2}).+$/, "$1")}</span>
-                </div>
-                }
-            </li>))}
-          </ul>
+          <MessagesSection/>
           <div className="bg-white flex absolute bottom-0 items-center gap-5 min-h-[6.7vh] w-full px-4 border-l border-stone-300">
             <textarea id="message-textarea" onKeyDown={e => handleKeyDown(e)} onChange={e => handleChange(e)} className="placeholder:text-[0.9rem] h-5 max-h-28 overflow-hidden placeholder:italic resize-none w-full focus:outline-0 focus:caret-blue-600" placeholder="Your message..." value={input} name="message"/>
             <button onClick={handleClick} className="p-2 hover:bg-stone-200 focus-visible:outline-0 focus-visible:bg-stone-200 active:scale-90"><img src="/send.png" width={25} alt="Send icon."/></button>
