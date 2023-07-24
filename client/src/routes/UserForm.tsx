@@ -3,7 +3,7 @@ import Loading from "../components/Loading"
 import { useState } from "react"
 import { AxiosResponse } from "axios"
 import { useDispatch } from "react-redux"
-import { setChats, setEmail, setId, setName, setSurname, setUsername } from "../store/userSlice"
+import { setEmail, setId, setName, setSurname, setUsername } from "../store/userSlice"
 import { setFoundUsers, setId as setFoundUserId } from "../store/foundUsersSlice"
 import { setId as setChatId, setMessages, setTitle, setUsers } from "../store/selectedChatSlice"
 
@@ -22,16 +22,15 @@ const UserForm = () => {
   const dispatch = useDispatch()
 
   const setSession = (user: AxiosResponse) => {
-    const { id, email, username, name, surname, chats } = user.data
+    const { id, email, username, name, surname } = user.data
     dispatch(setId(id))
     dispatch(setName(name))
     dispatch(setSurname(surname))
     dispatch(setUsername(username))
     dispatch(setEmail(email))
-    dispatch(setChats(chats))
     dispatch(setChatId(-1))
     dispatch(setTitle(""))
-    dispatch(setUsers([])) 
+    dispatch(setUsers([]))
     dispatch(setMessages([]))
     dispatch(setFoundUserId(-1))
     dispatch(setFoundUsers([]))

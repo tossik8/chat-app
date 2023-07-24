@@ -1,10 +1,8 @@
 package com.example.server.services;
 
-import com.example.server.entity.ChatEntity;
 import com.example.server.entity.UserEntity;
 import com.example.server.model.LoginUser;
 import com.example.server.model.RegistrationUser;
-import com.example.server.model.SentChat;
 import com.example.server.model.SentUser;
 import com.example.server.repository.UserRepository;
 import org.springframework.beans.BeanUtils;
@@ -23,12 +21,10 @@ import java.util.*;
 public class UserServiceImpl implements UserService{
 
     private final UserRepository userRepository;
-    private final MessageService messageService;
     private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepository, MessageService messageService) {
+    public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
-        this.messageService = messageService;
         this.passwordEncoder = new BCryptPasswordEncoder();
     }
 
@@ -53,23 +49,7 @@ public class UserServiceImpl implements UserService{
         } catch (ResponseStatusException e){
             throw new ResponseStatusException(e.getStatusCode(), e.getReason());
         }
-        SentUser sentUser = SentUser.createSentUser(Objects.requireNonNull(response.getBody()));
-        addConnectedUsers(sentUser, response.getBody());
-        return sentUser;
-    }
-
-    private void addConnectedUsers(SentUser user, UserEntity userEntity){
-        Set<SentChat> chats = new HashSet<>();
-        for(ChatEntity chatEntity : userEntity.getChats()){
-            SentChat chat = new SentChat(chatEntity.getId(), chatEntity.getName(), new HashSet<>(),
-                    messageService.getMessages(chatEntity.getId()));
-            for(UserEntity connectedUser :
-                    userRepository.findUserEntitiesByChatsIdAndIdNot(chatEntity.getId(), user.getId())){
-                chat.getConnectedUsers().add(SentUser.createSentUser(connectedUser));
-            }
-            chats.add(chat);
-        }
-        user.setChats(chats);
+        return SentUser.createSentUser(Objects.requireNonNull(response.getBody()));
     }
     private ResponseEntity<String> verifyRegistrationForm(RegistrationUser user){
         if(hasMissingValues(user.getName(),

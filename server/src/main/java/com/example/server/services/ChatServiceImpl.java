@@ -18,10 +18,12 @@ import java.util.Set;
 public class ChatServiceImpl implements ChatService {
     private final ChatRepository chatRepository;
     private final UserRepository userRepository;
+    private final MessageService messageService;
 
-    public ChatServiceImpl(ChatRepository chatRepository, UserRepository userRepository) {
+    public ChatServiceImpl(ChatRepository chatRepository, UserRepository userRepository, MessageService messageService) {
         this.chatRepository = chatRepository;
         this.userRepository = userRepository;
+        this.messageService = messageService;
     }
 
     @Override
@@ -42,5 +44,23 @@ public class ChatServiceImpl implements ChatService {
             connectedUsers.add(SentUser.createSentUser(receiver));
         });
         return new SentChat(chatEntity.getId(), null, connectedUsers, new ArrayList<>());
+    }
+
+    @Override
+    public Set<SentChat> getChats(long id) {
+        Optional<UserEntity> userEntity = userRepository.findById(id);
+        if(userEntity.isPresent()){
+            Set<SentChat> chats = new HashSet<>();
+            for(ChatEntity chatEntity : userEntity.get().getChats()){
+                SentChat chat = new SentChat(chatEntity.getId(), chatEntity.getName(), new HashSet<>(),
+                        messageService.getMessages(chatEntity.getId()));
+                userRepository.findUserEntitiesByChatsIdAndIdNot(chatEntity.getId(),
+                                userEntity.get().getId())
+                        .forEach(user -> chat.getConnectedUsers().add(SentUser.createSentUser(user)));
+                chats.add(chat);
+            }
+            return chats;
+        }
+        return null;
     }
 }

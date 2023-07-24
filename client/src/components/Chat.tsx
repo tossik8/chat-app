@@ -77,7 +77,7 @@ const Chat = ({id, title, connectedUsers, messages} : IChat) => {
         </div>
         <div className="flex flex-col text-sm items-end justify-between">
           <p className="time"></p>
-          <div className="bg-stone-400 min-w-fit px-[0.3rem] rounded-xl text-center unread-messages-count" data-value={0}></div>
+          <div className="bg-violet-200 min-w-fit px-[0.3rem] rounded-xl text-center unread-messages-count" data-value={0}></div>
         </div>
       </div>
     </article>

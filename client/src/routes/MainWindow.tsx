@@ -4,11 +4,21 @@ import ChatWindow from "../components/ChatWindow"
 import Navigation from "../components/Navigation"
 import { RootState } from "../store/store"
 import FoundUser from "../components/FoundUser"
+import { useEffect } from "react"
+import ChatService from "../services/ChatService"
+import { useDispatch } from "react-redux"
+import { setChats } from "../store/userSlice"
 
 
 const MainWindow = () => {
-    const { chats } = useSelector((state: RootState) => state.user)
+    const { chats, id } = useSelector((state: RootState) => state.user)
     const { foundUsers } = useSelector((state: RootState) => state.foundUsers)
+    const dispatch = useDispatch()
+    useEffect(() => {
+        ChatService.getChats(id).then(message => {
+            dispatch(setChats(message.data))
+        })
+    }, [])
 
     return (
     <div className="grid grid-cols-[35%_1fr] h-screen max-h-[1425px] max-w-[2560px] mx-auto">

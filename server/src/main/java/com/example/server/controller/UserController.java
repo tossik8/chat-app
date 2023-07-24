@@ -24,7 +24,7 @@ public class UserController {
     public SentUser logInUser(@RequestBody LoginUser user){
         return userService.logInUser(user);
     }
-    @GetMapping("")
+    @GetMapping
     public List<SentUser> getUsers(@RequestParam String query){
         return userService.getUsers(query);
     }

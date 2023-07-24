@@ -7,9 +7,14 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.Set;
 
 
 @Controller
+@CrossOrigin
+@RequestMapping("/api/v1/chats")
 public class ChatController {
 
     private final SimpMessagingTemplate simpMessagingTemplate;
@@ -38,5 +43,9 @@ public class ChatController {
                 "/queue/connections", chat);
         simpMessagingTemplate.convertAndSendToUser(String.valueOf(connectRequest.getReceiverId()),
                 "/queue/connections", chat);
+    }
+    @GetMapping("/{user-id}")
+    public @ResponseBody Set<SentChat> getChats(@PathVariable("user-id") long id){
+        return chatService.getChats(id);
     }
 }

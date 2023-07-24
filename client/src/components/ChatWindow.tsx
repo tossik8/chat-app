@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/store"
 import { Client } from "@stomp/stompjs"
@@ -9,13 +9,13 @@ import { IChat, IMessage } from "../global/types"
 import { IUser, setChats, updateChat } from "../store/userSlice"
 import { setId as setChatId, setMessages, setUsers } from "../store/selectedChatSlice"
 
+let client: Client = null!
 
 const ChatWindow = () => {
   const { id, title, users } = useSelector((state: RootState) => state.selectedChat)
   const { id: userId, chats } = useSelector((state: RootState) => state.user)
   const { id: foundUserId } = useSelector((state: RootState) => state.foundUsers)
   const dispatch = useDispatch()
-  let client = useRef<Client>(null!)
   const [ input, setInput ] = useState("")
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const textarea = document.getElementsByTagName("textarea")[0]
@@ -27,11 +27,11 @@ const ChatWindow = () => {
   const handleClick = () => {
     if(input.trim()){
       if(foundUserId !== -1){
-        client.current.publish({destination: "/app/connection", body: JSON.stringify({receiverId: foundUserId, text: input.trim(), senderId: userId})})
+        client.publish({destination: "/app/connection", body: JSON.stringify({receiverId: foundUserId, text: input.trim(), senderId: userId})})
         dispatch(setId(-1))
       }
       else{
-        client.current.publish({destination: "/app/message", body: JSON.stringify({chatId: id, text: input.trim(), senderId: userId})})
+        client.publish({destination: "/app/message", body: JSON.stringify({chatId: id, text: input.trim(), senderId: userId})})
       }
       setInput("")
       document.getElementsByTagName("textarea")[0].style.height = "20px"
@@ -46,13 +46,13 @@ const ChatWindow = () => {
   }
 
   useEffect(() => {
-    if(client.current?.connected){
-      client.current.deactivate()
+    if(client?.connected){
+      client.deactivate()
     }
-    client.current = new Client({
+    client = new Client({
         brokerURL: "ws://localhost:8080/ws",
         onConnect: () => {
-            client.current.subscribe(`/chat/${userId}/queue/connections`, (message) => {
+            client.subscribe(`/chat/${userId}/queue/connections`, (message) => {
                 const chat : IChat = JSON.parse(message.body)
                 chat.connectedUsers = chat.connectedUsers.filter((user: IUser) => user.id !== userId)
                 dispatch(setChats([...chats, chat]))
@@ -64,7 +64,7 @@ const ChatWindow = () => {
             })
             chats.forEach(chat => {
                 const article = document.getElementById(`chat-${chat.id}`) as HTMLElement
-                client.current.subscribe(`/chat/${chat.id}/queue/messages`, (message) => {
+                client.subscribe(`/chat/${chat.id}/queue/messages`, (message) => {
                     const { text, time, sender } : IMessage = JSON.parse(message.body)
                     if(id === chat.id){
                         dispatch(setMessages({text, sender, time}))
@@ -72,29 +72,32 @@ const ChatWindow = () => {
                     const chatCopy = JSON.parse(JSON.stringify(chat))
                     chatCopy.messages.push({text, time, sender})
                     dispatch(updateChat({id: chat.id, chat: chatCopy}))
-                    displayChatInfo(article, time, sender, text)
-                    if(article && userId !== sender.id && id !== chat.id){
-                        const counter = article.getElementsByClassName("unread-messages-count")[0]
-                        const num = +counter.getAttribute("data-value")! + 1
-                        counter.setAttribute("data-value", `${num}`)
-                        if(num !== 0){
-                            counter.textContent = `${num}`
-                        }
-                    }
+                    displayChatInfo(article, time, sender, text, chat.id)
                 })
             })
         }
     })
-    client.current.activate()
+    client.activate()
   }, [id, chats])
 
-  function displayChatInfo(article: HTMLElement, time: string, sender: IUser, text: string){
+  function displayChatInfo(article: HTMLElement, time: string, sender: IUser, text: string, chatId: number){
     if(article){
         article.getElementsByClassName("time")[0]!.textContent = time.replace(/^.+T(\d{2}:\d{2}).+$/, "$1")
         article.getElementsByClassName("sender")[0]!.textContent = `${sender.name} ${sender.surname}:`
         article.getElementsByClassName("message")[0]!.textContent = text
+        displayMissedMessagesCount(article, sender, chatId)
     }
 }
+  function displayMissedMessagesCount(article: HTMLElement, sender: IUser, chatId: number){
+    if(userId !== sender.id && id !== chatId){
+      const counter = article.getElementsByClassName("unread-messages-count")[0]
+      const num = +counter.getAttribute("data-value")! + 1
+      counter.setAttribute("data-value", `${num}`)
+      if(num !== 0){
+          counter.textContent = `${num}`
+      }
+    }
+  }
 
   return (
     <main className="relative bg-[url('/pexels-mudassir-ali-2680270.jpg')] bg-cover max-h-screen">
