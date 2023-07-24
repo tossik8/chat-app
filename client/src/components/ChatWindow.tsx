@@ -63,8 +63,8 @@ const ChatWindow = () => {
                 }
             })
             chats.forEach(chat => {
-                const article = document.getElementById(`chat-${chat.id}`) as HTMLElement
                 client.subscribe(`/chat/${chat.id}/queue/messages`, (message) => {
+                    const article = document.getElementById(`chat-${chat.id}`) as HTMLElement
                     const { text, time, sender } : IMessage = JSON.parse(message.body)
                     if(id === chat.id){
                         dispatch(setMessages({text, sender, time}))
