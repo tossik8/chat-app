@@ -11,9 +11,11 @@ interface IFoundUser{
     id: number
     title: string
     username: string
+    width: number
+    setIsChatWindow: (isChatWindow: boolean) => void
 }
 
-const FoundUser = ({id, title, username} : IFoundUser) => {
+const FoundUser = ({id, title, username, setIsChatWindow, width} : IFoundUser) => {
     const activeStateColour = "bg-blue-200"
     const hoveredStateColour = "bg-stone-200"
     const dispatch = useDispatch()
@@ -21,6 +23,7 @@ const FoundUser = ({id, title, username} : IFoundUser) => {
     const { id: chatId } = useSelector((state: RootState) => state.selectedChat)
     let chatsWithUser : IChat[] = []
     const handleClick = () => {
+        setIsChatWindow(true)
         chatsWithUser = chats.filter(chat => chat.connectedUsers.length === 1 && chat.connectedUsers[0].id === id)
         if(chatsWithUser.length === 0){
             dispatch(setMessages([]))
@@ -47,7 +50,7 @@ const FoundUser = ({id, title, username} : IFoundUser) => {
     }
     useEffect(() => {
         chatsWithUser = chats.filter(chat => chat.connectedUsers.length === 1 && chat.connectedUsers[0].id === id)
-        if(chatsWithUser[0]?.id === chatId){
+        if(chatsWithUser[0]?.id === chatId && width >= 768){
             changeActiveElementColour(`${id}`)
         }
     }, [])

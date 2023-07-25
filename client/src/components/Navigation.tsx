@@ -1,6 +1,6 @@
 import { faEllipsisVertical } from "@fortawesome/free-solid-svg-icons"
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
-import { useRef } from "react"
+import { useEffect, useRef } from "react"
 import UserService from "../services/UserService"
 import { useDispatch } from "react-redux"
 import { setFoundUsers } from "../store/foundUsersSlice"
@@ -12,7 +12,12 @@ const Navigation = () => {
     UserService.getUsers(inputRef.current.value).then(message => {
       dispatch(setFoundUsers(message.data))
     })
+    sessionStorage.setItem("input text", inputRef.current.value)
   }
+  useEffect(() => {
+    inputRef.current.value = sessionStorage.getItem("input text")!
+  }, [])
+
   return (
     <div className="flex items-center gap-4 px-4 h-[5.3vh] max-h-[80px]">
       <button className="hover:scale-125 focus-visible:outline-0 focus-visible:scale-125 transition-{scale} duration-200 ease-in-out"><FontAwesomeIcon icon={faEllipsisVertical} size="xl" color="rgb(168 162 158)" /></button>

@@ -11,6 +11,8 @@ interface IChat{
   title: string
   connectedUsers: IUser[]
   messages: IMessage[]
+  width: number
+  setIsChatWindow: (isChatWindow: boolean) => void
 }
 
 const activeStateColour = "bg-blue-200"
@@ -22,10 +24,11 @@ export function changeActiveElementColour(id: string){
   element?.classList.add(activeStateColour)
 }
 
-const Chat = ({id, title, connectedUsers, messages} : IChat) => {
+const Chat = ({id, title, connectedUsers, messages, setIsChatWindow, width} : IChat) => {
   const dispatch = useDispatch()
   const { id : chatId } = useSelector((state: RootState) => state.selectedChat)
   const handleClick = () => {
+    setIsChatWindow(true)
     dispatch(setMessages(messages))
     dispatch(setId(id))
     dispatch(setUsers(connectedUsers))
@@ -52,7 +55,7 @@ const Chat = ({id, title, connectedUsers, messages} : IChat) => {
     if(messages.length !== 0){
       displayChatInfo(article, messages.at(-1)!.time, messages.at(-1)!.sender, messages.at(-1)!.text)
     }
-    if(id === chatId){
+    if(id === chatId && width >= 768){
       changeActiveElementColour(`chat-${id}`)
     }
   }, [])
