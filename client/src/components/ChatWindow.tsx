@@ -62,6 +62,9 @@ const ChatWindow = ({width, setIsChatWindow} : IChatWindow) => {
             client.subscribe(`/chat/${userId}/queue/connections`, (message) => {
                 const chat : IChat = JSON.parse(message.body)
                 chat.connectedUsers = chat.connectedUsers.filter((user: IUser) => user.id !== userId)
+                if(chat.connectedUsers.length === 1){
+                  chat.name = `${chat.connectedUsers[0].name} ${chat.connectedUsers[0].surname}`
+                }
                 dispatch(setChats([...chats, chat]))
                 if(userId === chat.messages[0].sender.id){
                     dispatch(setChatId(chat.id))
