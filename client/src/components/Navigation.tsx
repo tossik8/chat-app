@@ -6,9 +6,9 @@ import { useDispatch } from "react-redux"
 import { setFoundUsers } from "../store/foundUsersSlice"
 import { useSelector } from "react-redux"
 import { RootState } from "../store/store"
-import { compareTwoStrings } from "string-similarity"
 import { IUser } from "../store/userSlice"
 import { IChat } from "../global/types"
+import trigramSimilarity from 'trigram-similarity';
 
 const Navigation = () => {
   const inputRef = useRef<HTMLInputElement>(null!)
@@ -17,7 +17,7 @@ const Navigation = () => {
   const handleChange = () => {
     const entities : (IUser | IChat)[] = []
     chats.forEach(chat => {
-      if(compareTwoStrings(chat.name, inputRef.current.value) > 0.3 || (chat.connectedUsers.length === 1 && compareTwoStrings(chat.connectedUsers[0].username, inputRef.current.value) > 0.3)){
+      if(trigramSimilarity(chat.name, inputRef.current.value) > 0.4 || (chat.connectedUsers.length === 1 && trigramSimilarity(chat.connectedUsers[0].username, inputRef.current.value) > 0.4)){
         entities.push(chat)
       }
     })

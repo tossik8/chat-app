@@ -97,7 +97,7 @@ const ChatWindow = ({width, setIsChatWindow} : IChatWindow) => {
         article.getElementsByClassName("message")[0]!.textContent = text
         displayMissedMessagesCount(article, sender, chatId)
     }
-}
+  }
   function displayMissedMessagesCount(article: HTMLElement, sender: IUser, chatId: number){
     if(userId !== sender.id && id !== chatId){
       const counter = article.getElementsByClassName("unread-messages-count")[0]
