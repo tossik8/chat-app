@@ -7,7 +7,7 @@ import FoundUser from "../components/FoundUser"
 import { useEffect, useState } from "react"
 import ChatService from "../services/ChatService"
 import { useDispatch } from "react-redux"
-import { setChats } from "../store/userSlice"
+import { IUser, setChats } from "../store/userSlice"
 import { IChat } from "../global/types"
 
 
@@ -37,7 +37,12 @@ const MainWindow = () => {
                 <div>
                     <Navigation/>
                     <div className="max-h-[1400px] h-[94.59vh] overflow-y-auto scrollbar-thin scrollbar-track-gray-500 scrollbar-thumb-gray-700">
-                        {foundUsers.length !== 0? foundUsers.map(foundUser => <FoundUser key={foundUser.id} id={foundUser.id} title={`${foundUser.name} ${foundUser.surname}`} username={foundUser.username} setIsChatWindow={setIsChatWindow} width={width}/>)
+                        {foundUsers.length !== 0? foundUsers.map(foundUser => {
+                            if((foundUser as IChat).messages){
+                                return <Chat key={foundUser.id} id={foundUser.id} title={foundUser.name} connectedUsers={(foundUser as IChat).connectedUsers} messages={(foundUser as IChat).messages} setIsChatWindow={setIsChatWindow} width={width}/>
+                            }
+                            return <FoundUser key={foundUser.id} id={foundUser.id} title={`${foundUser.name} ${(foundUser as IUser).surname}`} username={(foundUser as IUser).username} setIsChatWindow={setIsChatWindow} width={width}/>
+                        })
                         :
                         chats.map(chat => <Chat key={chat.id} id={chat.id} title={chat.name} connectedUsers={chat.connectedUsers} messages={chat.messages} setIsChatWindow={setIsChatWindow} width={width}/>
                         )}
@@ -49,7 +54,12 @@ const MainWindow = () => {
             <>
                 <Navigation/>
                 <div className="max-h-[1400px] h-[94.59vh] overflow-y-auto scrollbar-thin scrollbar-track-gray-500 scrollbar-thumb-gray-700">
-                    {foundUsers.length !== 0? foundUsers.map(foundUser => <FoundUser key={foundUser.id} id={foundUser.id} title={`${foundUser.name} ${foundUser.surname}`} username={foundUser.username} setIsChatWindow={setIsChatWindow} width={width}/>)
+                    {foundUsers.length !== 0? foundUsers.map(foundUser => {
+                        if((foundUser as IChat).messages){
+                            return <Chat key={foundUser.id} id={foundUser.id} title={foundUser.name} connectedUsers={(foundUser as IChat).connectedUsers} messages={(foundUser as IChat).messages} setIsChatWindow={setIsChatWindow} width={width}/>
+                        }
+                        return <FoundUser key={foundUser.id} id={foundUser.id} title={`${foundUser.name} ${(foundUser as IUser).surname}`} username={(foundUser as IUser).username} setIsChatWindow={setIsChatWindow} width={width}/>
+                    })
                     :
                     chats.map(chat => <Chat key={chat.id} id={chat.id} title={chat.name} connectedUsers={chat.connectedUsers} messages={chat.messages} setIsChatWindow={setIsChatWindow} width={width}/>
                     )}

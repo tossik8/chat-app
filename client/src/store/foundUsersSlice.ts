@@ -1,9 +1,10 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { IUser } from "./userSlice";
+import { IChat } from "../global/types";
 
 interface IFoundUsers{
     id: number
-    foundUsers: IUser[]
+    foundUsers: (IUser | IChat)[]
 }
 
 const foundUsersSlice = createSlice({

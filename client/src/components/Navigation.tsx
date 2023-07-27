@@ -4,13 +4,26 @@ import { useEffect, useRef } from "react"
 import UserService from "../services/UserService"
 import { useDispatch } from "react-redux"
 import { setFoundUsers } from "../store/foundUsersSlice"
+import { useSelector } from "react-redux"
+import { RootState } from "../store/store"
+import { compareTwoStrings } from "string-similarity"
+import { IUser } from "../store/userSlice"
+import { IChat } from "../global/types"
 
 const Navigation = () => {
   const inputRef = useRef<HTMLInputElement>(null!)
   const dispatch = useDispatch()
+  const { chats } = useSelector((state: RootState) => state.user)
   const handleChange = () => {
+    const entities : (IUser | IChat)[] = []
+    chats.forEach(chat => {
+      if(compareTwoStrings(chat.name, inputRef.current.value) > 0.3 || (chat.connectedUsers.length === 1 && compareTwoStrings(chat.connectedUsers[0].username, inputRef.current.value) > 0.3)){
+        entities.push(chat)
+      }
+    })
     UserService.getUsers(inputRef.current.value).then(message => {
-      dispatch(setFoundUsers(message.data))
+      entities.push(...message.data.filter((user: IUser) => !entities.find(chat => (chat as IChat).connectedUsers[0].id === user.id)))
+      dispatch(setFoundUsers(entities))
     })
     sessionStorage.setItem("input text", inputRef.current.value)
   }
