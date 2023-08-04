@@ -11,7 +11,9 @@ import { setId as setChatId, setMessages, setUsers } from "../store/selectedChat
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome"
 import { faArrowLeft } from "@fortawesome/free-solid-svg-icons"
 
-let client: Client = null!
+const client = new Client({
+  brokerURL: "ws://localhost:8080/ws"
+})
 
 interface IChatWindow{
   width: number
@@ -53,40 +55,35 @@ const ChatWindow = ({width, setIsChatWindow} : IChatWindow) => {
   }
 
   useEffect(() => {
-    if(client?.connected){
-      client.deactivate()
+    client.deactivate()
+    client.onConnect = () => {
+      client.subscribe(`/chat/${userId}/queue/connections`, (message) => {
+          const chat : IChat = JSON.parse(message.body)
+          chat.connectedUsers = chat.connectedUsers.filter((user: IUser) => user.id !== userId)
+          if(chat.connectedUsers.length === 1){
+            chat.name = `${chat.connectedUsers[0].name} ${chat.connectedUsers[0].surname}`
+          }
+          dispatch(setChats([...chats, chat]))
+          if(userId === chat.messages[0].sender.id){
+              dispatch(setChatId(chat.id))
+              dispatch(setUsers(chat.connectedUsers))
+              dispatch(setMessages(chat.messages[0]))
+          }
+      })
+      chats.forEach(chat => {
+          client.subscribe(`/chat/${chat.id}/queue/messages`, (message) => {
+              const article = document.getElementById(`chat-${chat.id}`) as HTMLElement
+              const { text, time, sender } : IMessage = JSON.parse(message.body)
+              if(id === chat.id){
+                  dispatch(setMessages({text, sender, time}))
+              }
+              const chatCopy = JSON.parse(JSON.stringify(chat))
+              chatCopy.messages.push({text, time, sender})
+              dispatch(updateChat(chatCopy))
+              displayChatInfo(article, time, sender, text, chat.id)
+          })
+      })
     }
-    client = new Client({
-        brokerURL: "ws://localhost:8080/ws",
-        onConnect: () => {
-            client.subscribe(`/chat/${userId}/queue/connections`, (message) => {
-                const chat : IChat = JSON.parse(message.body)
-                chat.connectedUsers = chat.connectedUsers.filter((user: IUser) => user.id !== userId)
-                if(chat.connectedUsers.length === 1){
-                  chat.name = `${chat.connectedUsers[0].name} ${chat.connectedUsers[0].surname}`
-                }
-                dispatch(setChats([...chats, chat]))
-                if(userId === chat.messages[0].sender.id){
-                    dispatch(setChatId(chat.id))
-                    dispatch(setUsers(chat.connectedUsers))
-                    dispatch(setMessages(chat.messages[0]))
-                }
-            })
-            chats.forEach(chat => {
-                client.subscribe(`/chat/${chat.id}/queue/messages`, (message) => {
-                    const article = document.getElementById(`chat-${chat.id}`) as HTMLElement
-                    const { text, time, sender } : IMessage = JSON.parse(message.body)
-                    if(id === chat.id){
-                        dispatch(setMessages({text, sender, time}))
-                    }
-                    const chatCopy = JSON.parse(JSON.stringify(chat))
-                    chatCopy.messages.push({text, time, sender})
-                    dispatch(updateChat({id: chat.id, chat: chatCopy}))
-                    displayChatInfo(article, time, sender, text, chat.id)
-                })
-            })
-        }
-    })
     client.activate()
   }, [id, chats])
 

@@ -41,7 +41,7 @@ const userSlice = createSlice({
         },
         updateChat: (state, {payload}) => {
             const index = state.chats.findIndex(chat => chat.id === payload.id)
-            state.chats[index] = payload.chat
+            state.chats[index] = payload
         }
     }
 })
